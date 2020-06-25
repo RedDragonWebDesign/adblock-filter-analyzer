@@ -5,7 +5,9 @@
 <head>
 	<title></title>
 	<link rel="stylesheet" href="style.css">
-	<script src="adblock-syntax.js"></script>
+	<script src="adblock-validator.js"></script>
+	<!-- needed for module.exports to work, which is needed for Jest testing framework -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
 </head>
 
 <body>
@@ -15,7 +17,7 @@
 	</h1>
 	
 	<p>
-	This is a tool that you can copy/paste AdBlock filters (also known as Static Filter Syntax) into and get a breakdown of what every piece of syntax does. Good for learning.
+	This is a tool that you can copy/paste AdBlock filters (also known as Static Filter Syntax) into and get an explanation of what every piece of syntax does. Good for learning.
 	</p>
 	
 	<p>
@@ -24,7 +26,7 @@
 	
 	<p>
 	Input:<br />
-	<textarea id="input"></textarea>
+	<textarea id="input">@@domain.com$test, test, test</textarea>
 	</p>
 	
 	<p>
@@ -33,16 +35,17 @@
 	
 	<p>
 	Valid?<br />
-	<input type="text" value="" disabled />
+	<input id="valid" type="text" value="" disabled />
 	</p>
 	
 	<p>
 	Analysis:<br />
+	<!-- TODO: change this to HTML, color code each "syntax" differently, when hovering over each syntax with mouse display a tooltip with the info -->
 	<textarea id="output" disabled></textarea>
 	</p>
 	
 	<p>
-	This project is is in progress. Want to <a href="">help with development</a>? Want to <a href="">report a bug</a>? Visit our GitHub!
+	This project is is in progress. Want to <a href="https://github.com/GeneralKenobi1/adblock-validator">help with development</a>? Want to <a href="https://github.com/GeneralKenobi1/adblock-validator/issues">report a bug</a>? Visit our GitHub!
 	</p>
 	
 	<p>
