@@ -11,6 +11,7 @@ class AdBlockSyntaxBlock {
 	countTrue = 0;
 	countFalse = 0
 	countNotSure = 0;
+	countComments = 0;
 	
 	constructor(s) {
 		this.string = s;
@@ -21,8 +22,10 @@ class AdBlockSyntaxBlock {
 				this.json += line.getJSON() + "\n\n";
 				this.html += line.getHTML() + "\n\n";
 				
-				// if not a comment, increment the true/false counters
-				if ( lineString[0] != "!" || Helper.left(lineString, 2) == "!#" || Helper.left(lineString, 2) == "!+" ) {
+				// increment the true/false counters
+				if ( line.syntax['comment'] ) {
+					this.countComments++;
+				} else {
 					switch( line.isValid ) {
 						case true:
 							this.countTrue++;
@@ -38,7 +41,7 @@ class AdBlockSyntaxBlock {
 			}
 		}
 		
-		this.json = "isValid Counts: " + this.countTrue + " true, " + this.countNotSure + " not sure, " + this.countFalse + " false" + "\n\n" + this.json;
+		this.json = this.countTrue + " valid, " + this.countNotSure + " unsure, " + this.countFalse + " invalid, " + this.countComments + " comments" + "\n\n" + this.json;
 	}
 }
 
