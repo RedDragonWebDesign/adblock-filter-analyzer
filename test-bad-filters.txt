@@ -8,6 +8,51 @@ example.com##test:style(position: absolute !important;):style(position: absolute
 example.com#?#test:style(position: absolute !important;):style(position: absolute !important;)
 example.com##test#@#test
 
+! not in list of valid uboPreParsingDirectives !#
+!# test
+
+! not in list of valid agHints !+
+!+ test
+
+! not in list of valid options $ (example: image)
+example.com$test
+
+! not in list of valid abpSnippets #$# (example: log hello world!)
+example.com#$#test
+
+! not in list of valid uboScriptlets ##+js()
+example.com##+js(test)
+
+! invalid CSS selectors (after ## #?# #@#)
+! don't forget, CSS selectors section must implement "cosmetic filters", e.g. :has(...), :has-text(...), :if(...), :if-not(...), :matches-css(...), :matches-css-before(...), :matches-css-after(...), :min-text-length(n), :not(...), :nth-ancestor(n), :upward(arg), :watch-attr(...), :xpath(...)
+! don't forget, HTML filters ##^ are allowed in CSS.
+# good way to test these is Chrome -> DevTools -> Console -> $$("css-selector goes here"). If you don't get [] as the output, it is a bad selector.
+##test >
+##test >! test
+##>
+##!hello
+##test[test2=test3"]
+##test[test2**="test3"]
+
+! invalid CSS properties [inside of :style() or :remove()]
+example.com##test:style(display: bob !important;)
+example.com##test:style(display bob !important;)
+example.com##test:style(!important display: bob;)
+example.com##test:style(width: bob px;)
+
+! invalid RegEx (in domain name)
+! adblock regex must start with / and end with /
+! trying to add options such as /i /g /ig will cause it to turn into a domain name instead of RegEx
+! doesn't look like you can mix regex + ##, is throwing error in uBlock syntax checker
+/test\.com/##test
+([A--Z])\w+
+([A-Z]()\w+
+([A-Z])\w|+
+
+! invalid URL (in domain name)
+
+
+
 ! miscellaneous
 example.com##test#?#test
 example.com#?#test##test
