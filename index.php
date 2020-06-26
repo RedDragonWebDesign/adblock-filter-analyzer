@@ -34,14 +34,15 @@
 	</p>
 	
 	<p>
-	Valid?<br />
-	<input id="valid" type="text" value="" disabled />
+	JSON:<br />
+	<!-- TODO: change this to HTML, color code each "syntax" differently, when hovering over each syntax with mouse display a tooltip with the info -->
+	<textarea id="json" disabled></textarea>
 	</p>
 	
 	<p>
-	Analysis:<br />
+	HTML:<br />
 	<!-- TODO: change this to HTML, color code each "syntax" differently, when hovering over each syntax with mouse display a tooltip with the info -->
-	<textarea id="output" disabled></textarea>
+	<textarea id="html" disabled></textarea>
 	</p>
 	
 	<p>
@@ -51,9 +52,14 @@
 	<p>
 	Reference documents:<br />
 	<a href="https://help.eyeo.com/en/adblockplus/how-to-write-filters">Eyeo.com - How To Write Filters</a><br />
-	<a href="https://help.eyeo.com/en/adblockplus/snippet-filters-tutorial">Eyeo.com - Snippet Filters Tutorial</a><br />
 	<a href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax">GitHub.com - uBlock Origin's additions to the AdBlock language</a><br />
+	<a href="https://github.com/gorhill/uBlock/wiki/Resources-Library">GitHub.com - uBlock Origin's JavaScript Scriptlet Syntax
 	<a href="https://adblockplus.org/en/filter-cheatsheet">AdBlockPlus.org - Filter Cheat Sheet</a><br />
+	<a href="https://kb.adguard.com/en/general/how-to-create-your-own-ad-filters">AdGuard.com - How to create your own ad filters</a>
+	</p>
+	
+	<p>
+	Note: There is more than one dialect of AdBlock Filter Syntax. For example, for JavaScript scripting, <a href="https://github.com/gorhill/uBlock">uBlock Origin</a> uses ##+js(), and <a href="https://adblockplus.org/">AdBlockPlus</a> uses #$#.
 	</p>
 </body>
 

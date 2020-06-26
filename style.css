@@ -1,9 +1,4 @@
-#input {
-	width: 500px;
-	height: 150px;
-}
-
-#output {
-	width: 400px;
-	height:300px;
+#input, #json, #html {
+	width: 800px;
+	height:400px;
 }
