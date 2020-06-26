@@ -20,16 +20,20 @@ class AdBlockSyntaxBlock {
 				let line = new AdBlockSyntaxLine(lineString);
 				this.json += line.getJSON() + "\n\n";
 				this.html += line.getHTML() + "\n\n";
-				switch( line.isValid ) {
-					case true:
-						this.countTrue++;
-						break;
-					case false:
-						this.countFalse++;
-						break;
-					case "not sure":
-						this.countNotSure++;
-						break;
+				
+				// if not a comment, increment the true/false counters
+				if ( lineString[0] != "!" || Helper.left(lineString, 2) == "!#" || Helper.left(lineString, 2) == "!+" ) {
+					switch( line.isValid ) {
+						case true:
+							this.countTrue++;
+							break;
+						case false:
+							this.countFalse++;
+							break;
+						case "not sure":
+							this.countNotSure++;
+							break;
+					}
 				}
 			}
 		}
@@ -65,9 +69,10 @@ class AdBlockSyntaxLine {
 		this.toParse = this.string;
 		this.syntax = {
 			'uboPreParsingDirective': '',
-			'agHint': '',
+			'agHint': '', // AdGuard Hint (similar to UBO pre-parsing directive)
 			'comment': '',
 			'exception': '',
+			'domainRegEx': '',
 			'domain': '',
 			'option': '',
 			'selectorException': '',
@@ -75,6 +80,7 @@ class AdBlockSyntaxLine {
 			'abpExtendedSelector': '',
 			'actionOperator': '',
 			'uboScriptlet': '',
+			'uboScriptletException': '',
 			'abpSnippet': '',
 		};
 	}
@@ -85,14 +91,14 @@ class AdBlockSyntaxLine {
 		let nextTwo = this.toParse.slice(0, 2);
 		if ( nextTwo == "!#" ) {
 			this.syntax['uboPreParsingDirective'] = this.string;
-			throw true;
+			return;
 		}
 		
 		// agHint !+
 		nextTwo = this.toParse.slice(0, 2);
 		if ( nextTwo == "!+" ) {
 			this.syntax['agHint'] = this.string;
-			throw true;
+			return;
 		}
 		
 		// comment !
@@ -134,6 +140,12 @@ class AdBlockSyntaxLine {
 			throw false;
 		} 
 		
+		// domainRegEx /domain/
+		if ( this.syntax['domain'] && Helper.left(this.syntax['domain'], 1) == "/" && Helper.right(this.syntax['domain'], 1) == "/" ) {
+			this.syntax['domainRegEx'] = this.syntax['domain'];
+			this.syntax['domain'] = "";
+		}
+		
 		// option $ (example: image)
 		if ( this.toParse[0] == '$' ) {
 			this.syntax['option'] = this.toParse;
@@ -142,20 +154,35 @@ class AdBlockSyntaxLine {
 			return;
 		}
 		
-		// selectorException #@#
-		let nextThree = this.toParse.slice(0, 3);
-		if ( nextThree == "#@#" ) {
-			this.syntax['selectorException'] = this.toParse;
-			// OK to have domain before it
-			// OK to have +js() after it
-		}
-		
 		// abpSnippet #$# (example: log hello world!)
-		nextThree = this.toParse.slice(0, 3);
+		let nextThree = this.toParse.slice(0, 3);
 		if ( nextThree == "#$#" ) {
 			this.syntax['abpSnippet'] = this.toParse;
 			// Nothing allowed after it
 			return;
+		}
+		
+		// uboScriptletException #@#+js(
+		let nextSeven = Helper.left(this.toParse, 7);
+		if ( nextSeven == "#@#+js(" ) {
+			this.syntax['uboScriptletException'] = this.toParse;
+			// Nothing allowed after it
+			return;
+		}
+		
+		// uboScriptlet ##+js(
+		let nextSix = Helper.left(this.toParse, 6);
+		if ( nextSix == "##+js(" ) {
+			this.syntax['uboScriptlet'] = this.toParse;
+			// Nothing allowed after it
+			return;
+		}
+		
+		// selectorException #@#
+		nextThree = this.toParse.slice(0, 3);
+		if ( nextThree == "#@#" ) {
+			this.syntax['selectorException'] = this.toParse;
+			// OK to have domain before it
 		}
 		
 		// selector ##
@@ -173,7 +200,7 @@ class AdBlockSyntaxLine {
 				this.toParse = this.toParse.slice(matchPos);
 				this.syntax['actionOperator'] = this.toParse;
 				
-				let matches = this.countRegExMatches(this.toParse, /:style\(|:remove\(/);
+				let matches = Helper.countRegExMatches(this.toParse, /:style\(|:remove\(/);
 				if ( matches > 1 ) {
 					this.errorHint = "Can't have action operators :style() :remove() more than once.";
 					throw false;
@@ -184,39 +211,25 @@ class AdBlockSyntaxLine {
 		// abpExtendedSelector #?#
 		nextThree = this.toParse.slice(0, 3);
 		if ( nextThree == "#?#" ) {
+			// parse until :style() or :remove() encountered
+			matchPos = this.toParse.search(/:style\(|:remove\(/);
 			
-			// parse until :style() encountered
-			
+			// if no action operators
+			if ( matchPos === -1 ) {
+				this.syntax['abpExtendedSelector'] = this.toParse;
+				return;
+			} else {
+				this.syntax['abpExtendedSelector'] = this.toParse.slice(0, matchPos);
+				this.toParse = this.toParse.slice(matchPos);
+				this.syntax['actionOperator'] = this.toParse;
+				
+				let matches = Helper.countRegExMatches(this.toParse, /:style\(|:remove\(/);
+				if ( matches > 1 ) {
+					this.errorHint = "Can't have action operators :style() :remove() more than once.";
+					throw false;
+				}
+			}
 		}
-		
-		// ##+js()
-		// must have domain
-		// some special cases: #@#+js() is OK
-		// are multiple allowed? Not sure. uBlock validator says yes. I can't find any double examples in filter lists though
-		
-		// cosmetic filters look similar to action operators, but we will just treat them as part of CSS selectors
-		// :has(...), :has-text(...), :if(...), :if-not(...), :matches-css(...), :matches-css-before(...), :matches-css-after(...), :min-text-length(n), :not(...), :nth-ancestor(n), :upward(arg), :watch-attr(...), :xpath(...)
-		
-		// HTML filters take the form ##^stuff
-		// Example: example.com##^script:has-text(7c9e3a5d51cdacfc)
-		// we will just treat these as CSS selectors
-		
-		// action operators :remove() :style()
-		// only 1 allowed per document
-		// must be "trailing operator", that is, at the end of the filter
-		
-		// For reference: "nothing allowed before it" code is:
-		// if ( this.string !== this.toParse ) throw false;
-	}
-	
-	left(string, length) {
-		return string.slice(0, length);
-	}
-	
-	countRegExMatches(str, regExPattern) {
-		regExPattern = new RegExp(regExPattern, "g");
-		console.log(regExPattern);
-		return ((str || '').match(regExPattern) || []).length;
 	}
 	
 	/** split commas */
@@ -235,6 +248,18 @@ class AdBlockSyntaxLine {
 		// note: selector syntax is definitely case sensitive. URL's might be too
 		
 		// domain regex probably has to be all or nothing. can't mix in te/s/t because / can also be part of the URL
+		
+		// make sure that "cosmetic filters" in CSS selectors doesn't make filter invalid.
+		// Examples of "cosmetic filters":
+		// :has(...), :has-text(...), :if(...), :if-not(...), :matches-css(...), :matches-css-before(...), :matches-css-after(...), :min-text-length(n), :not(...), :nth-ancestor(n), :upward(arg), :watch-attr(...), :xpath(...)
+		
+		// make sure that "HTML filters" in CSS selectors doesn't make filter invalid.
+		// HTML filters take the form ##^stuff
+		// Example: example.com##^script:has-text(7c9e3a5d51cdacfc)
+		
+		// uboScriptlet ##+js(
+		// must have domain, except for certain exceptions: #@#+js()
+		// are multiple allowed? Not sure. uBlock validator says yes. I can't find any double examples in filter lists though
 	}
 	
 	getJSON() {
@@ -270,22 +295,37 @@ class AdBlock {
 }
 */
 
-function escapeHTML(unsafe) {
-    return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
- }
- 
- function unescapeHTML(input) {
-    return input
-         .replace("&amp;", /&/g)
-         .replace("&lt;", /</g)
-         .replace("&gt;", />/g)
-         .replace("&quot;", /"/g)
-         .replace("&#039;", /'/g);
+class Helper {
+	static left(string, length) {
+		return string.slice(0, length);
+	}
+	
+	static right(string, length) {
+		return string.substr(string.length - length)
+	}
+	
+	static countRegExMatches(str, regExPattern) {
+		regExPattern = new RegExp(regExPattern, "g");
+		return ((str || '').match(regExPattern) || []).length;
+	}
+
+	static escapeHTML(unsafe) {
+		return unsafe
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#039;");
+	}
+	
+	static unescapeHTML(input) {
+		return input
+			.replace("&amp;", /&/g)
+			.replace("&lt;", /</g)
+			.replace("&gt;", />/g)
+			.replace("&quot;", /"/g)
+			.replace("&#039;", /'/g);
+	}
 }
 
 // This line not optional. Content loads top to bottom. Need to wait until DOM is fully loaded.
