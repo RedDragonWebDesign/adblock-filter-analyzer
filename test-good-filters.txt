@@ -1,0 +1,98 @@
+! CSS Selectors ##
+telemundo.com##.__hub--ad, .ad--MAIN, .ad--MULTI, .ad-container, .banner-sticky-bg
+theblaze.com##[id^="sWidget_-_Worth_a_look"]
+telegraph.co.uk###message, .adblocker-message
+###BackToTop
+##.BackToTop
+##[class*="share__icon"]
+##[href*="facebook.com/dialog/share?"]
+www.reuters.com##div[class="slide-image-enclosure "] > img[src*="s3.reutersmedia.net/resources/r/"]:not([style*="opacity"]):not([class="slick-loading"])
+ago.vermont.gov##.navhead.rad div[style="display: block; width: 1200px; height: 29px; float: left;"]
+golfdigest.com##.component-sticky.site-header div[style*="overflow: hidden; height:"]
+www.yahoo.com##[class*="fixed-space"][class*="modal-open"]
+
+! #$# - snippets
+audiofanzine.com#$#abort-on-property-read TextDecoder; abort-on-property-read require; abort-current-inline-script _audiofanzineProductStack
+vidlox.me#$#abort-current-inline-script Math zfgloaded
+oral-amateure.com#$#hide-if-contains-image-hash 00ff992d2c3efe08,38f8e0733b0d1f07,bf049c9cbc8c0f1e,e8caeae0e8f0f0f0
+zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read BetterJsPop; abort-on-property-read exoDocumentProtocol; abort-on-property-read ExLdr.serve; abort-on-property-read ExoLoader; abort-on-property-read ExoLoader.addZone; abort-on-property-read ExoLoader.serve; abort-on-property-read getexoloader; abort-current-inline-script document.dispatchEvent myEl; abort-on-property-read aNB
+
+! exception @@
+@@||100percentfedup.com^$generichide
+@@||cdn.optimizely.com/js/*.js$domain=compassion.com|creditsesame.com|freeshipping.com|heroku.com|imageshack.com
+
+! exception #@#
+abcnews.go.com#@#.social-footer-wrapper
+
+! ##+js()
+upload4earn.org##+js(ra, checked)
+zheltaya.ru##+js(aopr, document.getElementById)
+chip.de##+js(aeld, , params)
+pornve.com##+js(set, frg, 1)
+pornve.com##+js(window.open-defuser)
+youtube.com##+js(json-prune, playerResponse.adPlacements playerResponse.playerAds adPlacements playerAds)
+freenet.de##+js(acis, document.createElement, /\}\s*\(.*?\b(self|this|window)\b.*?\)/)
+! per ublock documentation
+example.com#@#+js()
+! per ublock documentation
+#@#+js()
+
+! action operators
+rmdown.com##A[href][target="_blank"]:style(opacity: 0 !important;)
+gab.com##.tabs-bar, .ui .page__top:style(position: static !important;)
+purewow.com##.fb_digioh-lock:style(overflow-x: hidden !important; overflow-y: scroll !important;)
+scribd.com##body.modal_open:style(overflow-x: hidden !important; overflow-y: scroll !important; padding-right: 0 !important;)
+hostinger.com##path[fill-rule="evenodd"]:style(fill: #ffffff !important;)
+
+! cosmetic filters :has(...), :has-text(...), :if(...), :if-not(...), etc.
+udenvirus.dk##.nfc-bottom-right:has-text(Reimage)
+howtoremove.guide##.entry-content > div:has-text(Special Offer)
+rmdown.com##[style]:not(SPAN)
+6stream.xyz##body > div[style*="position: fixed;"]:has-text(/Thank you for visiting/)
+si.com##.short-only.logo > .desktop-only.full-logo > .color-porcelain.hover-fill, .showBackground.stickyFooter, .ui-button.ui-button-close.small.is-fixed, body:not(.under-social) nav.main .under-social-logo.desktop-only, hr
+strikeout.me##body > div:has(img[alt="AdBlock Alert"])
+
+! #?# - extended CSS
+! deprecated synonyms for :has()
+run.az#?#div[class$="bolmem"][-ext-has='load:contains(Sayğac)']
+businessinsider.in#?#div:-abp-has(> a[target="_self"][rel="nofollow,noindex"])
+strikeout.me##body > div:if(img[alt="AdBlock Alert"])
+
+! HTML filters ##^
+newsbreak24.de##^script:has-text(===):has-text(/[\w\W]{14000}/)
+
+! RegEx /regex/
+/^https://www\.narcity\.com/assets/[0-9a-f]{24,}\.js/$script
+/^https:\/\/([a-z]+\.)?sythe\.org\/[\w\W]{30,}/$image
+/([0-9]{1,3}\.){3}[0-9]{1,3}.*(\/proxy|\.wasm|\.wsm|\.wa)$/$third-party,websocket
+/.*(\/proxy|\.wasm|\.wsm|\.wa)$/$websocket,xmlhttprequest,domain=reactor.cc|sickrage.ca|sorteosrd.com|streamplay.to
+
+! escape character \
+tribunnews.com##+js(acis, Math, ='\x)
+t-online.de##^script:has-text(,window\);)
+egy.best,egybest.*,vidstream.*##+js(window.open-defuser, /(click|cv)\.php/, 10)
+google.*###center_col > #\5f Emc
+webmail.freenet.de#@#+js(acis, document.createElement, /\}\s*\(.*?\b(self|this|window)\b.*?\)/)
+wize.life##^script:has-text(===):has-text(/[\w\W]{16000}/)
+
+! domain wildcard *
+&ctxId=*&pubId=*&clientDT=
+
+! exclude ~
+.snowplowanalytics.$domain=~snowplowanalytics.com
+
+! any protocol ||
+||izooto.com^$script,domain=bloombergquint.com|dnaindia.com
+||lightboxcdn.com/vendor/*$domain=cnet.com
+||picreel.com^$subdocument
+||stacklist.com/*/subscribe-modal
+||*/app/email-signup/inline-article-news.html$subdocument
+||pico.tools^
+||athenainstitute.biz^$third-party
+||menshealth.com/*/advagg_js$script,domain=menshealth.com
+
+! any domain punctuation ^
+||atoshonetwork.com^$third-party
+
+! domain= or operator |
+$third-party,xmlhttprequest,domain=alltube.pl|alltube.tv

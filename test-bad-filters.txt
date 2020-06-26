@@ -1,0 +1,14 @@
+! per ublock documentation
+example.com##+js()
+
+! can't have things twice
+example.com##test#?#test:style(position: absolute !important;)
+example.com#?#test##test:style(position: absolute !important;)
+example.com##test:style(position: absolute !important;):style(position: absolute !important;)
+example.com#?#test:style(position: absolute !important;):style(position: absolute !important;)
+example.com##test#@#test
+
+! miscellaneous
+example.com##test#?#test
+example.com#?#test##test
+<textarea></textarea></textarea> " " ' ' < > & &
