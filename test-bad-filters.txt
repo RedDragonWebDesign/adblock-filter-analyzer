@@ -9,9 +9,11 @@ example.com#?#test:style(position: absolute !important;):style(position: absolut
 example.com##test#@#test
 
 ! not in list of valid uboPreParsingDirectives !#
+! TODO: spacing rules?
 !# test
 
 ! not in list of valid agHints !+
+! TODO: spacing rules?
 !+ test
 
 ! not in list of valid options $ (example: image)
@@ -31,8 +33,8 @@ example.com##+js(test)
 ##test >! test
 ##>
 ##!hello
-##test[test2=test3"]
-##test[test2**="test3"]
+##[test2=test3"]
+##[test2**="test3"]
 
 ! invalid CSS properties [inside of :style() or :remove()]
 example.com##test:style(display: bob !important;)
