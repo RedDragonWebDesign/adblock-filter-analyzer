@@ -1,3 +1,18 @@
+! one bad filter, for testing purposes
+bad filter
+
+! uboPreParsingDirective !#
+!#include ublock-filters.txt
+!#include ublock/filters.txt
+!#if env_firefox
+!#endif
+
+! agHint !+
+!+ NOT_OPTIMIZED
+!+ NOT_OPTIMIZED PLATFORM(android)
+!+ PLATFORM(windows,mac,android)
+!+ NOT_PLATFORM(ext_safari, ext_android_cb, ios)
+
 ! CSS Selectors ##
 telemundo.com##.__hub--ad, .ad--MAIN, .ad--MULTI, .ad-container, .banner-sticky-bg
 theblaze.com##[id^="sWidget_-_Worth_a_look"]
@@ -20,6 +35,7 @@ zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read BetterJsPo
 ! exception @@
 @@||100percentfedup.com^$generichide
 @@||cdn.optimizely.com/js/*.js$domain=compassion.com|creditsesame.com|freeshipping.com|heroku.com|imageshack.com
+@@/100percentfedup.com/$generichide
 
 ! exception #@#
 abcnews.go.com#@#.social-footer-wrapper

@@ -11,6 +11,10 @@ example.com##test#@#test
 ! not in list of valid uboPreParsingDirectives !#
 ! TODO: spacing rules?
 !# test
+! per ublock documentation, no full URL's for include
+!#include https://github.com/uBlockOrigin/uAssets/blob/master/filters/filters.txt
+! per ublock documentation, no ... URL's for include
+!#include ../filters.txt
 
 ! not in list of valid agHints !+
 ! TODO: spacing rules?
@@ -28,7 +32,7 @@ example.com##+js(test)
 ! invalid CSS selectors (after ## #?# #@#)
 ! don't forget, CSS selectors section must implement "cosmetic filters", e.g. :has(...), :has-text(...), :if(...), :if-not(...), :matches-css(...), :matches-css-before(...), :matches-css-after(...), :min-text-length(n), :not(...), :nth-ancestor(n), :upward(arg), :watch-attr(...), :xpath(...)
 ! don't forget, HTML filters ##^ are allowed in CSS.
-# good way to test these is Chrome -> DevTools -> Console -> $$("css-selector goes here"). If you don't get [] as the output, it is a bad selector.
+! good way to test these is Chrome -> DevTools -> Console -> $$("css-selector goes here"). If you don't get [] as the output, it is a bad selector.
 ##test >
 ##test >! test
 ##>
@@ -47,15 +51,21 @@ example.com##test:style(width: bob px;)
 ! trying to add options such as /i /g /ig will cause it to turn into a domain name instead of RegEx
 ! doesn't look like you can mix regex + ##, is throwing error in uBlock syntax checker
 /test\.com/##test
-([A--Z])\w+
-([A-Z]()\w+
-([A-Z])\w|+
+/([A--Z])\w+/
+/([A-Z]()\w+/
+/([A-Z])\w|+/
 
 ! invalid URL (in domain name)
 
 
 
-! miscellaneous
+! garbage text (not a filter)
+<textarea></textarea></textarea> " " ' ' < > & &
+# test -> $$("")
+~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>? `1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./
+~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./
+
+
+! certain markers only allowed once
 example.com##test#?#test
 example.com#?#test##test
-<textarea></textarea></textarea> " " ' ' < > & &
