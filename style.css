@@ -1,4 +1,32 @@
-#input, #json, #html {
-	width: 800px;
-	height:400px;
+body {
+	margin: 1em;
 }
+
+#input, #json, #html {
+	width: 100%;
+	height: 400px;
+}
+
+#html {
+	border: 1px solid black;
+	cursor: text;
+	overflow: scroll;
+	resize: both;
+}
+
+.uboPreParsingDirective {background-color: orange}
+.agHint {background-color: #C586AB}
+.comment {background-color: #6A9955}
+.exception {background-color: #D4D4D4}
+.exceptionRegEx {background-color: yellow}
+.domainRegEx {background-color: #D16969}
+.domain {background-color: #CE9178}
+.option {background-color: lightblue}
+.selectorException {background-color: limegreen}
+.selector {background-color: #DCDCAA}
+.abpExtendedSelector {background-color: brown}
+.actionOperator {background-color: gold}
+.uboScriptlet {background-color: pink}
+.uboScriptletException {background-color: aqua}
+.abpSnippet {background-color: #569CD6}
+.error {background-color: red !important;}

@@ -1,8 +1,17 @@
-// package manager = Yarn
-// testing framework = Jest
+// Copyright https://www.RedDragonWebDesign.com/
+// Permission required to use or copy code. All rights reserved.
 
-// TODO: change #$# to ##+js(  )   Also, it must be paired with a domain name
-// TODO: there's more "action operators" than just :style()
+"use strict";
+
+// TODO: tooltips
+// TODO: bug, typing any syntax on a new line (2nd line for example) fails to highlight it
+// TODO: bug: regexes with dollar sign
+// TODO: bug, <textarea> is rendering as a textarea in rich text box
+// TODO: double dollar sign getting eaten up, i.e. # test -> $$()
+// TODO: bug, rich text paste, tab is not rendering correctly
+// TODO: bug, rich text cursor position
+	// window.getSelection()
+	// may need to use draftJS library
 
 class AdBlockSyntaxBlock {
 	string = "";
@@ -12,36 +21,65 @@ class AdBlockSyntaxBlock {
 	countFalse = 0
 	countNotSure = 0;
 	countComments = 0;
+	countMismatches = 0;
 	
-	constructor(s) {
+	parseString(s) {
+		this.parse(s);
+	}
+	
+	parseHTML(html) {
+		let s = html;
+		// remove spans
+		s = s.replace(/<span class=\".*?\">/g, "");
+		s = s.replace(/<\/span>/g, "");
+		// convert <br /> to \n
+		s = s.replace(/<br>/g, "\n");
+		this.parse(s);
+	}
+	
+	parse(s) {
 		this.string = s;
 		let lines = s.split("\n");
 		for ( let lineString of lines) {
 			if ( lineString !== '' ) {
 				let line = new AdBlockSyntaxLine(lineString);
 				this.json += line.getJSON() + "\n\n";
-				this.html += line.getHTML() + "\n\n";
-				
+				this.html += line.getHTML();
+			
 				// increment the true/false counters
-				if ( line.syntax['comment'] ) {
-					this.countComments++;
-				} else {
-					switch( line.isValid ) {
-						case true:
-							this.countTrue++;
-							break;
-						case false:
-							this.countFalse++;
-							break;
-						case "not sure":
-							this.countNotSure++;
-							break;
-					}
-				}
+				this.incrementCounters(line);
 			}
+			this.html += "<br />";
 		}
 		
-		this.json = this.countTrue + " valid, " + this.countNotSure + " unsure, " + this.countFalse + " invalid, " + this.countComments + " comments" + "\n\n" + this.json;
+		this.json = this.countTrue + " valid, "
+			+ this.countNotSure + " unsure, "
+			+ this.countFalse + " invalid, "
+			+ this.countComments + " comments, "
+			+ this.countMismatches + " mismatches"
+			+ "\n\n"
+			+ this.json;
+	}
+	
+	incrementCounters(line) {
+		if ( line.syntax['comment'] ) {
+			this.countComments++;
+		} else {
+			switch( line.isValid ) {
+				case true:
+					this.countTrue++;
+					break;
+				case false:
+					this.countFalse++;
+					break;
+				case "not sure":
+					this.countNotSure++;
+					break;
+				case "mismatch":
+					this.countMismatches++;
+					break;
+			}
+		}
 	}
 }
 
@@ -62,10 +100,20 @@ class AdBlockSyntaxLine {
 			this.validateEachCategory();
 		} catch(e) {
 			this.isValid = e;
-			return;
 		}
 		
-		return;
+		this.checkForMismatch();
+	}
+	
+	checkForMismatch() {
+		let lineString = "";
+		for ( let key in this.syntax ) {
+			lineString += this.syntax[key];
+		}
+		
+		if ( lineString !== this.string ) {
+			this.isValid = "mismatch";
+		}
 	}
 	
 	setVars() {
@@ -75,6 +123,7 @@ class AdBlockSyntaxLine {
 			'agHint': '', // AdGuard Hint (similar to UBO pre-parsing directive)
 			'comment': '',
 			'exception': '',
+			'exceptionRegEx': '',
 			'domainRegEx': '',
 			'domain': '',
 			'option': '',
@@ -111,9 +160,9 @@ class AdBlockSyntaxLine {
 		}
 		
 		// exception @@
+		let domainException = false;
 		if ( this.string[0] == '@' && this.string[1] == '@' ) {
-			this.syntax['exception'] = '@@';
-			this.toParse = this.string.slice(2, this.string.length);
+			domainException = true;
 			if ( this.toParse.search(/#@#|##|#\?#|:style\(|:remove\(|#\$#/) !== -1 ) {
 				this.errorHint = "@@ statements may not contain #@# ## #?# :style() :remove() #$#"
 				throw false;
@@ -138,15 +187,27 @@ class AdBlockSyntaxLine {
 			throw false;
 		}
 		
-		if ( this.syntax['exception'] && ! this.syntax['domain'] ) {
+		if ( domainException && ! this.syntax['domain'] ) {
 			this.errorHint = "exception @@ must have a domain";
 			throw false;
-		} 
+		}
+		
+		// exception @@
+		if ( domainException ) {
+			this.syntax['exception'] = this.syntax['domain'];
+			this.syntax['domain'] = "";
+		}
 		
 		// domainRegEx /domain/
 		if ( this.syntax['domain'] && Helper.left(this.syntax['domain'], 1) == "/" && Helper.right(this.syntax['domain'], 1) == "/" ) {
 			this.syntax['domainRegEx'] = this.syntax['domain'];
 			this.syntax['domain'] = "";
+		}
+		
+		// exceptionRegEx @@/domain/
+		if ( this.syntax['exception'] && Helper.left(this.syntax['exception'], 3) == "@@/" && Helper.right(this.syntax['exception'], 1) == "/" ) {
+			this.syntax['exceptionRegEx'] = this.syntax['exception'];
+			this.syntax['exception'] = "";
 		}
 		
 		// option $ (example: image)
@@ -279,8 +340,18 @@ class AdBlockSyntaxLine {
 	}
 	
 	getHTML() {
-		// TODO
-		return "";
+		let html = "";
+		let classes = "";
+		for ( let key in this.syntax ) {
+			classes = key;
+			if ( ! this.isValid || this.isValid === "mismatch" ) {
+				classes += " error";
+			}
+			if ( this.syntax[key] ) {
+				html += '<span class="' + classes + '">' + this.syntax[key] + '</span>';
+			}
+		}
+		return html;
 	}
 }
 // module.exports = analyze;
@@ -329,6 +400,40 @@ class Helper {
 			.replace("&quot;", /"/g)
 			.replace("&#039;", /'/g);
 	}
+	
+	static getCaretPosition(editableDiv) {
+		var caretPos = 0,
+		sel, range;
+		if (window.getSelection) {
+			sel = window.getSelection();
+			if (sel.rangeCount) {
+				range = sel.getRangeAt(0);
+				if (range.commonAncestorContainer.parentNode == editableDiv) {
+				caretPos = range.endOffset;
+				}
+			}
+		} else if (document.selection && document.selection.createRange) {
+			range = document.selection.createRange();
+			if (range.parentElement() == editableDiv) {
+				var tempEl = document.createElement("span");
+				editableDiv.insertBefore(tempEl, editableDiv.firstChild);
+				var tempRange = range.duplicate();
+				tempRange.moveToElementText(tempEl);
+				tempRange.setEndPoint("EndToEnd", range);
+				caretPos = tempRange.text.length;
+			}
+		}
+		return caretPos;
+	}
+	
+	static moveCursor(win, charCount) {
+		let sel = win.getSelection();
+		if (sel.rangeCount > 0) {
+			var textNode = sel.focusNode;
+			var newOffset = sel.focusOffset + charCount;
+			sel.collapse(textNode, Math.min(textNode.length, newOffset));
+		}
+	}
 }
 
 // This line not optional. Content loads top to bottom. Need to wait until DOM is fully loaded.
@@ -355,8 +460,32 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	
 	analyze.addEventListener('click', function(e) {
 		// In theory, we should need some escapeHTML's and unescapeHTML's around here. In actual testing, anything being written into the <textarea> by JS didn't need to be escaped.
-		let block = new AdBlockSyntaxBlock(input.value);
+		let block = new AdBlockSyntaxBlock();
+		block.parseString(input.value);
 		json.value = block.json;
-		html.value = block.html;
+		html.innerHTML = block.html;
 	});
+	
+	html.addEventListener('input', function(e) {
+		let range = window.getSelection();
+		
+		
+		let block = new AdBlockSyntaxBlock();
+		block.parseHTML(html.innerHTML);
+		json.value = block.json;
+		html.innerHTML = block.html;
+		Helper.moveCursor(html, caretPosition);
+	});
+	
+	// When pasting into rich text editor, force plain text. Do not allow rich text or HTML. For example, the default copy/paste from VS Code is rich text. The formatting overrides our syntax highlighting.
+	html.addEventListener("paste", function(e) {
+		// cancel paste
+		e.preventDefault();
+		// get text representation of clipboard
+		var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+		// insert text manually
+		document.execCommand("insertHTML", false, text);
+	});
+	
+	analyze.click();
 });
