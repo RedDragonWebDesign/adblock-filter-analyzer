@@ -109,6 +109,7 @@ class AdBlockSyntaxLine {
 	
 	setVars() {
 		this.toParse = this.string;
+		// TODO: refactor this to have sub arrays, such as "code", "isValid", "tooltipText", etc.
 		this.syntax = {
 			'uboPreParsingDirective': '',
 			'agHint': '', // AdGuard Hint (similar to UBO pre-parsing directive)
@@ -402,22 +403,45 @@ class Helper {
 			.replace("&quot;", /"/g)
 			.replace("&#039;", /'/g);
 	}
-	
-	static getCurrentRange() {
-		var sel = window.getSelection();
-		if (sel.getRangeAt && sel.rangeCount) {
-			return sel.getRangeAt(0);
-		}
-	}
-	
-	static restoreSelection(selectedRange, element) {
+
+	static getStartOffset() {
 		var selection = window.getSelection();
-		if (selectedRange) {
-			// selectedRange.selectNodeContents(element);
-			window.getSelection().removeAllRanges();
-			window.getSelection().addRange(selectedRange);
+		if ( selection.getRangeAt && selection.rangeCount ) {
+			let range = selection.getRangeAt(0).cloneRange();
+			let startOffset = range.startOffset;
+			return startOffset;
 		}
 	}
+	
+	static setStartOffset(startOffset, element) {
+		var selection = window.getSelection();
+		// selection.removeAllRanges();
+		let range = new Range();
+		range.setStart(element, startOffset);
+		range.collapse(true);
+		// selection.removeAllRanges();
+		selection.addRange(range);
+	}
+	
+	/*
+	static getStartOffset() {
+		var selection = window.getSelection();
+		if ( selection.getRangeAt && selection.rangeCount ) {
+			let range = selection.getRangeAt(0).cloneRange();
+			let startOffset = range.startOffset;
+			return startOffset;
+		}
+	}
+	
+	static setStartOffset(startOffset, element) {
+		var selection = window.getSelection();
+		// selection.removeAllRanges();
+		let range = new Range();
+		range.setStart(element, startOffset);
+		range.setEnd(element, startOffset);
+		selection.addRange(range);
+	}
+	*/
 }
 
 // This line not optional. Content loads top to bottom. Need to wait until DOM is fully loaded.
@@ -451,12 +475,10 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	});
 	
 	richText.addEventListener('input', function(e) {
-		let selectedRange = Helper.getCurrentRange();
-		let block = new AdBlockSyntaxBlock();
-		block.parseRichText(richText.innerHTML);
-		json.value = block.json;
-		richText.innerHTML = block.richText;
-		Helper.restoreSelection(selectedRange, richText);
+		let startOffset = Helper.getStartOffset();
+		richText.innerHTML += "a";
+		Helper.setStartOffset(startOffset, richText);
+		richText.focus(); // blinks the cursor
 	});
 	
 	// When pasting into rich text editor, force plain text. Do not allow rich text or HTML. For example, the default copy/paste from VS Code is rich text. The formatting overrides our syntax highlighting.
@@ -467,6 +489,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		var text = (e.originalEvent || e).clipboardData.getData('text/plain');
 		// insert text manually
 		document.execCommand("insertHTML", false, text);
+		richText.focus(); // blinks the cursor
 	});
 	
 	analyze.click();
