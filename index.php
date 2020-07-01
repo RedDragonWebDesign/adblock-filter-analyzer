@@ -7,8 +7,6 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="style.css">
 	<script src="adblock-validator.js"></script>
-	<!-- needed for module.exports to work, which is needed for Jest testing framework -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
 </head>
 
 <body>
