@@ -5,6 +5,8 @@ bad filter
 !#include ublock-filters.txt
 !#include ublock/filters.txt
 !#if env_firefox
+!#if !env_chromium
+!#if env_mobile
 !#endif
 
 ! agHint !+
@@ -25,6 +27,7 @@ www.reuters.com##div[class="slide-image-enclosure "] > img[src*="s3.reutersmedia
 ago.vermont.gov##.navhead.rad div[style="display: block; width: 1200px; height: 29px; float: left;"]
 golfdigest.com##.component-sticky.site-header div[style*="overflow: hidden; height:"]
 www.yahoo.com##[class*="fixed-space"][class*="modal-open"]
+hdblog.it#@#a[href^="https://www.amazon."][href*="tag="]
 
 ! #$# - snippets
 audiofanzine.com#$#abort-on-property-read TextDecoder; abort-on-property-read require; abort-current-inline-script _audiofanzineProductStack
@@ -77,6 +80,9 @@ strikeout.me##body > div:if(img[alt="AdBlock Alert"])
 ! HTML filters ##^
 newsbreak24.de##^script:has-text(===):has-text(/[\w\W]{14000}/)
 
+! HTML filter exclusions #@#^
+newsbreak24.de#@#^script:has-text(===):has-text(/[\w\W]{14000}/)
+
 ! RegEx /regex/
 /^https://www\.narcity\.com/assets/[0-9a-f]{24,}\.js/$script
 /^https:\/\/([a-z]+\.)?sythe\.org\/[\w\W]{30,}/$image
@@ -84,6 +90,7 @@ newsbreak24.de##^script:has-text(===):has-text(/[\w\W]{14000}/)
 /.*(\/proxy|\.wasm|\.wsm|\.wa)$/$websocket,xmlhttprequest,domain=reactor.cc|sickrage.ca|sorteosrd.com|streamplay.to
 /^test$/
 /^test$/$websocket
+@@/https?:\/\/.*[=|&|%|#|+].*/$popup,domain=animeflv.net|jkanime.net
 
 ! escape character \
 tribunnews.com##+js(acis, Math, ='\x)
@@ -99,7 +106,8 @@ wize.life##^script:has-text(===):has-text(/[\w\W]{16000}/)
 ! exclude ~
 .snowplowanalytics.$domain=~snowplowanalytics.com
 
-! any protocol ||
+! domain name anchor ||
+! It will match on boundaries of domains - where dots in domains are. ||example.com will match another.example.com but not badexample.com.
 ||izooto.com^$script,domain=bloombergquint.com|dnaindia.com
 ||lightboxcdn.com/vendor/*$domain=cnet.com
 ||picreel.com^$subdocument
@@ -108,6 +116,12 @@ wize.life##^script:has-text(===):has-text(/[\w\W]{16000}/)
 ||pico.tools^
 ||athenainstitute.biz^$third-party
 ||menshealth.com/*/advagg_js$script,domain=menshealth.com
+
+! start & end anchors
+! Marks start or end of the URL
+|https://$3p,script,domain=mac-torrent-download.net,badfilter
+badscript.js|
+|https://www.test.com/url|
 
 ! any domain punctuation ^
 ||atoshonetwork.com^$third-party

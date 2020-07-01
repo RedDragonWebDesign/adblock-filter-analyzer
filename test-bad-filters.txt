@@ -7,6 +7,23 @@ example.com#?#test##test:style(position: absolute !important;)
 example.com##test:style(position: absolute !important;):style(position: absolute !important;)
 example.com#?#test:style(position: absolute !important;):style(position: absolute !important;)
 example.com##test#@#test
+example.com##test#?#test
+example.com#?#test##test
+
+! action operators :style() and :remove() are not allowed to be applied in many cases
+example.com##^.badstuff:style(position: absolute !important;)
+example.com##^.badstuff:remove(position: absolute !important;)
+example.com#@#^.badstuff:style(position: absolute !important;)
+example.com#@#^.badstuff:remove(position: absolute !important;)
+example.com#@#.badstuff:style(position: absolute !important;)
+example.com#@#.badstuff:remove(position: absolute !important;)
+tribunnews.com##+js(acis, Math, ='\x):style(position: absolute !important;)
+test.com$websocket:style(position: absolute !important;)
+audiofanzine.com#$#abort-on-property-read TextDecoder:style(position: absolute !important;)
+
+! no commas allowed in regex filters
+/test/,/test2/##hello
+@@/test/,/test2/##hello
 
 ! not in list of valid uboPreParsingDirectives !#
 ! TODO: spacing rules?
@@ -56,16 +73,14 @@ example.com##test:style(width: bob px;)
 /([A-Z])\w|+/
 
 ! invalid URL (in domain name)
-
-
+! https://help.dragonmetrics.com/en/articles/213986-invalid-characters-in-url
+! NOTE: these characters are legal, but have special functions in URL's :/#?&@%+~
+http://www.example.com/grave`accent
+http://www.example.com/pi|pe
+www.example.com/中文/北京[city]
 
 ! garbage text (not a filter)
 <textarea></textarea></textarea> " " ' ' < > & &
 # test -> $$("")
 ~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>? `1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./
 ~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./
-
-
-! certain markers only allowed once
-example.com##test#?#test
-example.com#?#test##test

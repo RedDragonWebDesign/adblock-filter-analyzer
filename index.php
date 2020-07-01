@@ -3,7 +3,7 @@
 <html lang="en-us">
 
 <head>
-	<title></title>
+	<title>AdBlock Filter Syntax Analyzer</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="style.css">
 	<script src="adblock-validator.js"></script>
@@ -11,8 +11,7 @@
 
 <body>
 	<h1>
-	AdBlock Filter Syntax<br />
-	Validator & Analyzer
+	AdBlock Filter Syntax Analyzer
 	</h1>
 	
 	<p>
@@ -20,26 +19,20 @@
 	</p>
 	
 	<p>
-	You can also write your own filters and paste them in here to verify that you wrote them correctly.
-	</p>
-	
-	<p>
-	Input:<br />
-	<textarea id="input">@@domain.com$test, test, test</textarea>
-	</p>
-	
-	<p>
-	<button id="analyze">Analyze</button>
-	</p>
-	
-	<p>
-	Rich Text:<br />
 	<div id="rich-text" contenteditable="true"></div>
 	</p>
 	
-	<p>
+	<p id="show-json-container">
+	<a href="javascript:;" onclick="document.getElementById('json-container').style.display = 'block'; document.getElementById('show-json-container').style.display = 'none';">Show JSON</a>
+	</p>
+	
+	<p id="json-container">
 	JSON:<br />
 	<textarea id="json" disabled></textarea>
+	</p>
+	
+	<p>
+	<a href="tooltips.php">List Of Syntax Types</a>
 	</p>
 	
 	<p>
@@ -48,11 +41,11 @@
 	
 	<p>
 	Reference documents:<br />
-	<a href="https://help.eyeo.com/en/adblockplus/how-to-write-filters">Eyeo.com - How To Write Filters</a><br />
-	<a href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax">GitHub.com - uBlock Origin's additions to the AdBlock language</a><br />
-	<a href="https://github.com/gorhill/uBlock/wiki/Resources-Library">GitHub.com - uBlock Origin's JavaScript Scriptlet Syntax</a><br />
-	<a href="https://adblockplus.org/en/filter-cheatsheet">AdBlockPlus.org - Filter Cheat Sheet</a><br />
-	<a href="https://kb.adguard.com/en/general/how-to-create-your-own-ad-filters">AdGuard.com - How to create your own ad filters</a>
+	<a href="https://help.eyeo.com/en/adblockplus/how-to-write-filters">AdBlockPlus - How To Write Filters</a><br />
+	<a href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax">uBlockOrigin - uBlock Origin's additions to the AdBlock language</a><br />
+	<a href="https://github.com/gorhill/uBlock/wiki/Resources-Library">uBlockOrigin - uBlock Origin's JavaScript Scriptlet Syntax</a><br />
+	<a href="https://adblockplus.org/en/filter-cheatsheet">AdBlockPlus - Filter Cheat Sheet</a><br />
+	<a href="https://kb.adguard.com/en/general/how-to-create-your-own-ad-filters">AdGuard - How to create your own ad filters</a>
 	</p>
 </body>
 

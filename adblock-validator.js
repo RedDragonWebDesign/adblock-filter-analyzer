@@ -76,13 +76,32 @@ class AdBlockSyntaxBlock {
 class AdBlockSyntaxLine {
 	string = "";
 	toParse = "";
-	syntax = {};
+	// TODO: refactor this to have sub arrays, such as "code", "isValid", "tooltipText", etc.
+	syntax = {
+		'uboPreParsingDirective': '',
+		'agHint': '', // AdGuard Hint (similar to UBO pre-parsing directive)
+		'comment': '',
+		'exception': '',
+		'exceptionRegEx': '',
+		'domainRegEx': '',
+		'domain': '',
+		'option': '',
+		'selectorException': '',
+		'selector': '',
+		'htmlFilter': '',
+		'htmlFilterException': '',
+		'abpExtendedSelector': '',
+		'actionOperator': '',
+		'uboScriptlet': '',
+		'uboScriptletException': '',
+		'abpSnippet': '',
+	};
 	isValid = "not sure";
 	errorHint = "";
 	
 	constructor(s) {
 		this.string = s;
-		this.setVars();
+		this.toParse = this.string;
 		
 		try {
 			this.categorizeSyntax();
@@ -105,28 +124,6 @@ class AdBlockSyntaxLine {
 		if ( lineString !== this.string ) {
 			this.isValid = "mismatch";
 		}
-	}
-	
-	setVars() {
-		this.toParse = this.string;
-		// TODO: refactor this to have sub arrays, such as "code", "isValid", "tooltipText", etc.
-		this.syntax = {
-			'uboPreParsingDirective': '',
-			'agHint': '', // AdGuard Hint (similar to UBO pre-parsing directive)
-			'comment': '',
-			'exception': '',
-			'exceptionRegEx': '',
-			'domainRegEx': '',
-			'domain': '',
-			'option': '',
-			'selectorException': '',
-			'selector': '',
-			'abpExtendedSelector': '',
-			'actionOperator': '',
-			'uboScriptlet': '',
-			'uboScriptletException': '',
-			'abpSnippet': '',
-		};
 	}
 	
 	/** dice syntax string up into the 9 categories: comment !, exception @@, domain, option $, selectorException #@#, selector ##, abpExtendedSelector #?#, actionoperator :style(), and abpSnippet #$# */
@@ -245,11 +242,28 @@ class AdBlockSyntaxLine {
 			return;
 		}
 		
+		// htmlFilter ##^
+		nextThree = this.toParse.slice(0, 3);
+		if ( nextThree == "##^" ) {
+			this.syntax['htmlFilter'] = this.toParse;
+			// Nothing allowed after it
+			return;
+		}
+		
+		// htmlFilterException #@#^
+		let nextFour = this.toParse.slice(0, 4);
+		if ( nextFour == "#@#^" ) {
+			this.syntax['htmlFilterException'] = this.toParse;
+			// Nothing allowed after it
+			return;
+		}
+		
 		// selectorException #@#
 		nextThree = this.toParse.slice(0, 3);
 		if ( nextThree == "#@#" ) {
 			this.syntax['selectorException'] = this.toParse;
-			// OK to have domain before it
+			// Nothing allowed after it
+			return;
 		}
 		
 		// selector ##
@@ -319,10 +333,6 @@ class AdBlockSyntaxLine {
 		// make sure that "cosmetic filters" in CSS selectors doesn't make filter invalid.
 		// Examples of "cosmetic filters":
 		// :has(...), :has-text(...), :if(...), :if-not(...), :matches-css(...), :matches-css-before(...), :matches-css-after(...), :min-text-length(n), :not(...), :nth-ancestor(n), :upward(arg), :watch-attr(...), :xpath(...)
-		
-		// make sure that "html filters" in CSS selectors doesn't make filter invalid.
-		// html filters take the form ##^stuff
-		// Example: example.com##^script:has-text(7c9e3a5d51cdacfc)
 		
 		// uboScriptlet ##+js(
 		// must have domain, except for certain exceptions: #@#+js()
@@ -446,7 +456,6 @@ class Helper {
 
 // This line not optional. Content loads top to bottom. Need to wait until DOM is fully loaded.
 window.addEventListener('DOMContentLoaded', (e) => {
-	let input = document.getElementById('input');
 	let analyze = document.getElementById('analyze');
 	let json = document.getElementById('json');
 	let richText = document.getElementById('rich-text');
@@ -464,19 +473,15 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	text += xmlhttp.responseText;
 	*/
 	
-	input.value = text;
-	
-	analyze.addEventListener('click', function(e) {
-		// In theory, we should need some escapeHTML's and unescapeHTML's around here. In actual testing, anything being written into the <textarea> by JS didn't need to be escaped.
-		let block = new AdBlockSyntaxBlock();
-		block.parseString(input.value);
-		json.value = block.json;
-		richText.innerHTML = block.richText;
-	});
+	richText.innerHTML = text;
 	
 	richText.addEventListener('input', function(e) {
+		// In theory, we should need some escapeHTML's and unescapeHTML's around here. In actual testing, anything being written into the <textarea> by JS didn't need to be escaped.
 		let startOffset = Helper.getStartOffset();
-		richText.innerHTML += "a";
+		let block = new AdBlockSyntaxBlock();
+		block.parseRichText(richText.innerHTML);
+		json.value = block.json;
+		richText.innerHTML = block.richText;
 		Helper.setStartOffset(startOffset, richText);
 		richText.focus(); // blinks the cursor
 	});
@@ -492,5 +497,5 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		richText.focus(); // blinks the cursor
 	});
 	
-	analyze.click();
+	richText.dispatchEvent(new Event('input', { bubbles: true }));
 });
