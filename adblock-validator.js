@@ -3,20 +3,10 @@
 
 "use strict";
 
-// TODO: tooltips
-// TODO: bug, typing any syntax on a new line (2nd line for example) fails to highlight it
-// TODO: bug: regexes with dollar sign
-// TODO: bug, <textarea> is rendering as a textarea in rich text box
-// TODO: double dollar sign getting eaten up, i.e. # test -> $$()
-// TODO: bug, rich text paste, tab is not rendering correctly
-// TODO: bug, rich text cursor position
-	// window.getSelection()
-	// may need to use draftJS library
-
 class AdBlockSyntaxBlock {
 	string = "";
 	json = "";
-	html = "";
+	richText = "";
 	countTrue = 0;
 	countFalse = 0
 	countNotSure = 0;
@@ -27,8 +17,8 @@ class AdBlockSyntaxBlock {
 		this.parse(s);
 	}
 	
-	parseHTML(html) {
-		let s = html;
+	parseRichText(richText) {
+		let s = richText;
 		// remove spans
 		s = s.replace(/<span class=\".*?\">/g, "");
 		s = s.replace(/<\/span>/g, "");
@@ -44,12 +34,12 @@ class AdBlockSyntaxBlock {
 			if ( lineString !== '' ) {
 				let line = new AdBlockSyntaxLine(lineString);
 				this.json += line.getJSON() + "\n\n";
-				this.html += line.getHTML();
+				this.richText += line.getRichText();
 			
 				// increment the true/false counters
 				this.incrementCounters(line);
 			}
-			this.html += "<br />";
+			this.richText += "<br />";
 		}
 		
 		this.json = this.countTrue + " valid, "
@@ -98,6 +88,7 @@ class AdBlockSyntaxLine {
 			this.categorizeSyntax();
 			this.splitCommas();
 			this.validateEachCategory();
+			// TODO: this.genericOrSpecific(); // https://help.eyeo.com/en/adblockplus/how-to-write-filters#generic-specific
 		} catch(e) {
 			this.isValid = e;
 		}
@@ -198,8 +189,19 @@ class AdBlockSyntaxLine {
 			this.syntax['domain'] = "";
 		}
 		
+		// regex special case: /blahblah$/
+		// need to handle this carefully because of the $ sign, also used to indicate option
+		if ( Helper.left(this.toParse, 2) == "$/" ) {
+			this.syntax['domain'] += "$/";
+			this.toParse = this.toParse.slice(2);
+		}
+		
 		// domainRegEx /domain/
-		if ( this.syntax['domain'] && Helper.left(this.syntax['domain'], 1) == "/" && Helper.right(this.syntax['domain'], 1) == "/" ) {
+		if (
+			this.syntax['domain'] &&
+			Helper.left(this.syntax['domain'], 1) == "/" &&
+			Helper.right(this.syntax['domain'], 1) == "/"
+		) {
 			this.syntax['domainRegEx'] = this.syntax['domain'];
 			this.syntax['domain'] = "";
 		}
@@ -317,8 +319,8 @@ class AdBlockSyntaxLine {
 		// Examples of "cosmetic filters":
 		// :has(...), :has-text(...), :if(...), :if-not(...), :matches-css(...), :matches-css-before(...), :matches-css-after(...), :min-text-length(n), :not(...), :nth-ancestor(n), :upward(arg), :watch-attr(...), :xpath(...)
 		
-		// make sure that "HTML filters" in CSS selectors doesn't make filter invalid.
-		// HTML filters take the form ##^stuff
+		// make sure that "html filters" in CSS selectors doesn't make filter invalid.
+		// html filters take the form ##^stuff
 		// Example: example.com##^script:has-text(7c9e3a5d51cdacfc)
 		
 		// uboScriptlet ##+js(
@@ -339,8 +341,8 @@ class AdBlockSyntaxLine {
 		return s;
 	}
 	
-	getHTML() {
-		let html = "";
+	getRichText() {
+		let richText = "";
 		let classes = "";
 		for ( let key in this.syntax ) {
 			classes = key;
@@ -348,10 +350,10 @@ class AdBlockSyntaxLine {
 				classes += " error";
 			}
 			if ( this.syntax[key] ) {
-				html += '<span class="' + classes + '">' + this.syntax[key] + '</span>';
+				richText += '<span class="' + classes + '">' + this.syntax[key] + '</span>';
 			}
 		}
-		return html;
+		return richText;
 	}
 }
 // module.exports = analyze;
@@ -401,37 +403,19 @@ class Helper {
 			.replace("&#039;", /'/g);
 	}
 	
-	static getCaretPosition(editableDiv) {
-		var caretPos = 0,
-		sel, range;
-		if (window.getSelection) {
-			sel = window.getSelection();
-			if (sel.rangeCount) {
-				range = sel.getRangeAt(0);
-				if (range.commonAncestorContainer.parentNode == editableDiv) {
-				caretPos = range.endOffset;
-				}
-			}
-		} else if (document.selection && document.selection.createRange) {
-			range = document.selection.createRange();
-			if (range.parentElement() == editableDiv) {
-				var tempEl = document.createElement("span");
-				editableDiv.insertBefore(tempEl, editableDiv.firstChild);
-				var tempRange = range.duplicate();
-				tempRange.moveToElementText(tempEl);
-				tempRange.setEndPoint("EndToEnd", range);
-				caretPos = tempRange.text.length;
-			}
+	static getCurrentRange() {
+		var sel = window.getSelection();
+		if (sel.getRangeAt && sel.rangeCount) {
+			return sel.getRangeAt(0);
 		}
-		return caretPos;
 	}
 	
-	static moveCursor(win, charCount) {
-		let sel = win.getSelection();
-		if (sel.rangeCount > 0) {
-			var textNode = sel.focusNode;
-			var newOffset = sel.focusOffset + charCount;
-			sel.collapse(textNode, Math.min(textNode.length, newOffset));
+	static restoreSelection(selectedRange, element) {
+		var selection = window.getSelection();
+		if (selectedRange) {
+			// selectedRange.selectNodeContents(element);
+			window.getSelection().removeAllRanges();
+			window.getSelection().addRange(selectedRange);
 		}
 	}
 }
@@ -441,7 +425,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	let input = document.getElementById('input');
 	let analyze = document.getElementById('analyze');
 	let json = document.getElementById('json');
-	let html = document.getElementById('html');
+	let richText = document.getElementById('rich-text');
 	
 	// load filter tests into textarea, to be our defaults
 	let xmlhttp = new XMLHttpRequest();
@@ -463,22 +447,20 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		let block = new AdBlockSyntaxBlock();
 		block.parseString(input.value);
 		json.value = block.json;
-		html.innerHTML = block.html;
+		richText.innerHTML = block.richText;
 	});
 	
-	html.addEventListener('input', function(e) {
-		let range = window.getSelection();
-		
-		
+	richText.addEventListener('input', function(e) {
+		let selectedRange = Helper.getCurrentRange();
 		let block = new AdBlockSyntaxBlock();
-		block.parseHTML(html.innerHTML);
+		block.parseRichText(richText.innerHTML);
 		json.value = block.json;
-		html.innerHTML = block.html;
-		Helper.moveCursor(html, caretPosition);
+		richText.innerHTML = block.richText;
+		Helper.restoreSelection(selectedRange, richText);
 	});
 	
 	// When pasting into rich text editor, force plain text. Do not allow rich text or HTML. For example, the default copy/paste from VS Code is rich text. The formatting overrides our syntax highlighting.
-	html.addEventListener("paste", function(e) {
+	richText.addEventListener("paste", function(e) {
 		// cancel paste
 		e.preventDefault();
 		// get text representation of clipboard
