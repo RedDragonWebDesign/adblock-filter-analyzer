@@ -35,8 +35,8 @@
 	</p>
 	
 	<p>
-	HTML:<br />
-	<div id="html" contenteditable="true"></div>
+	Rich Text:<br />
+	<div id="rich-text" contenteditable="true"></div>
 	</p>
 	
 	<p>

@@ -2,12 +2,12 @@ body {
 	margin: 1em;
 }
 
-#input, #json, #html {
+#input, #json, #rich-text {
 	width: 100%;
 	height: 400px;
 }
 
-#html {
+#rich-text {
 	border: 1px solid black;
 	cursor: text;
 	overflow: scroll;
