@@ -14,7 +14,7 @@ class AdBlockSyntaxBlock {
 	countMismatches = 0;
 	
 	parseString(s) {
-		this.parse(s);
+		this._parse(s);
 	}
 	
 	parseRichText(richText) {
@@ -24,10 +24,10 @@ class AdBlockSyntaxBlock {
 		s = s.replace(/<\/span>/g, "");
 		// convert <br /> to \n
 		s = s.replace(/<br>/g, "\n");
-		this.parse(s);
+		this._parse(s);
 	}
 	
-	parse(s) {
+	_parse(s) {
 		this.string = s;
 		let lines = s.split("\n");
 		for ( let lineString of lines) {
@@ -37,7 +37,7 @@ class AdBlockSyntaxBlock {
 				this.richText += line.getRichText();
 			
 				// increment the true/false counters
-				this.incrementCounters(line);
+				this._incrementCounters(line);
 			}
 			this.richText += "<br />";
 		}
@@ -51,7 +51,7 @@ class AdBlockSyntaxBlock {
 			+ this.json;
 	}
 	
-	incrementCounters(line) {
+	_incrementCounters(line) {
 		if ( line.syntax['comment'] ) {
 			this.countComments++;
 		} else {
@@ -104,9 +104,9 @@ class AdBlockSyntaxLine {
 		this.toParse = this.string;
 		
 		try {
-			this.categorizeSyntax();
-			this.splitCommas();
-			this.validateEachCategory();
+			this._categorizeSyntax();
+			this._splitCommas();
+			this._validateEachCategory();
 			// TODO: this.genericOrSpecific(); // https://help.eyeo.com/en/adblockplus/how-to-write-filters#generic-specific
 		} catch(e) {
 			// only catch what we want, let actual errors throw to console
@@ -119,7 +119,7 @@ class AdBlockSyntaxLine {
 		
 		if ( this.isValid !== true ) {
 			try {
-				this.lookForErrors();
+				this._lookForErrors();
 			} catch(e) {
 				// only catch what we want, let actual errors throw to console
 				if ( e === true || e === false || e === "not sure" ) {
@@ -129,10 +129,10 @@ class AdBlockSyntaxLine {
 				}
 			}
 		}
-		this.lookForMismatch();
+		this._lookForMismatch();
 	}
 	
-	lookForErrors() {
+	_lookForErrors() {
 		// no spaces in domains or domain regex
 		if ( this.syntax['domainRegEx'] && this.syntax['domainRegEx'].search(/ /g) !== -1 ) {
 			this.errorHint = "no spaces allowed in domains, exceptions, domainRegEx, or exceptionRegEx";
@@ -241,7 +241,7 @@ class AdBlockSyntaxLine {
 		
 	}
 	
-	lookForMismatch() {
+	_lookForMismatch() {
 		let lineString = "";
 		for ( let key in this.syntax ) {
 			lineString += this.syntax[key];
@@ -253,14 +253,14 @@ class AdBlockSyntaxLine {
 	}
 	
 	/** dice syntax string up into categories: comment !, exception @@, domain, option $, selectorException #@#, selector ##, abpExtendedSelector #?#, actionoperator :style(), abpSnippet #$#, etc. */
-	categorizeSyntax() {
-		this.lookForComments();
-		this.lookForDomains();
-		this.lookForActionOperators();
-		this.lookForSelectors();
+	_categorizeSyntax() {
+		this._lookForComments();
+		this._lookForDomains();
+		this._lookForActionOperators();
+		this._lookForSelectors();
 	}
 		
-	lookForComments() {	
+	_lookForComments() {	
 		// uboPreParsingDirective !#
 		if ( this.toParse.left(2) === "!#" ) {
 			this.syntax['uboPreParsingDirective'] = this.string;
@@ -280,7 +280,7 @@ class AdBlockSyntaxLine {
 		}
 	}
 	
-	lookForDomains() {
+	_lookForDomains() {
 		// domainRegEx /regex/
 		let matchPos = this.toParse.search(/^\/.*?[^\\]\//);
 		let regExLookingStringFound = (matchPos !== -1);
@@ -343,7 +343,7 @@ class AdBlockSyntaxLine {
 		}
 	}
 	
-	lookForSelectors() {
+	_lookForSelectors() {
 		// option $ (example: image)
 		if ( this.toParse.left(1) === '$' ) {
 			this.syntax['option'] = this.toParse;
@@ -411,7 +411,7 @@ class AdBlockSyntaxLine {
 		}
 	}
 	
-	lookForActionOperators() {
+	_lookForActionOperators() {
 		let matchPos = this.toParse.search(/(:style\(|:remove\().*\)$/);
 		if ( matchPos !== -1 ) {
 			this.syntax['actionOperator'] = this.toParse.slice(matchPos);
@@ -420,7 +420,7 @@ class AdBlockSyntaxLine {
 	}
 	
 	/** split commas */
-	splitCommas() {
+	_splitCommas() {
 		// domain - split by commas
 		// option - split by commas
 		// selector - split by commas
@@ -431,7 +431,7 @@ class AdBlockSyntaxLine {
 	}
 	
 	/** now, do validation on each individual category */
-	validateEachCategory() {
+	_validateEachCategory() {
 		// note: selector syntax is definitely case sensitive. URL's might be too
 		
 		// domain regex probably has to be all or nothing. can't mix in te/s/t because / can also be part of the URL
