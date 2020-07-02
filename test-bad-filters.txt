@@ -96,3 +96,9 @@ www.example.com/中文/北京[city]
 # test -> $$("")
 ~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>? `1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./
 ~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./
+
+! ##+js() #@#+js() :style() :remove() must end in )
+test.com##.class:style(position: absolute !important;)garbage
+test.com##.class:remove(position: absolute !important;)garbage
+upload4earn.org##+js(ra, checked)garbage
+zheltaya.ru#@#+js(aopr, document.getElementById)garbage
