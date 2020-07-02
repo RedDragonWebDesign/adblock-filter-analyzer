@@ -143,12 +143,13 @@ class AdBlockSyntaxLine {
 		s = s.replace(/^\/.*?[^\\]\//g, '');
 		s = s.replace(/^@@\/.*?[^\\]\//g, '@@');
 		
-		// TODO: css can have $ sign
+		// TODO: css can have $ sign, +js can have $ sign
 		
 		
 		
 		// look for double selectors
-		let count = Helper.countRegExMatches(s, /\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#/);
+		// had to take out $, too many false positives, it's used in CSS and +js()
+		let count = Helper.countRegExMatches(s, /\#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#/);
 		if ( count > 1 ) {
 			this.errorHint = "selector type syntax $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# is only allowed once per filter";
 			throw false;

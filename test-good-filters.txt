@@ -140,3 +140,9 @@ $third-party,xmlhttprequest,domain=alltube.pl|alltube.tv
 $ghide
 $shide
 $ehide
+
+! dollar signs not being used to indicate $options
+mac-torrent-download.net##+js(acis, $, AdBlock)
+watchmygf.me##+js(set, $.magnificPopup.open, noopFunc)
+run.az#?#div[class$="bolmem"]
+udenvirus.dk##th:has-text(/^Detection$/)
