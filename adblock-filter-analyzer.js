@@ -509,80 +509,123 @@ class Helper {
 			.replace("&quot;", /"/g)
 			.replace("&#039;", /'/g);
 	}
+}
 
-	static getStartOffset() {
-		var selection = window.getSelection();
-		if ( selection.getRangeAt && selection.rangeCount ) {
-			let range = selection.getRangeAt(0).cloneRange();
-			let startOffset = range.startOffset;
-			return startOffset;
+// Credit to Liam (Stack Overflow)
+// https://stackoverflow.com/a/41034697/3480193
+class Cursor {
+	static getCurrentCursorPosition(parentElement) {
+		var selection = window.getSelection(),
+			charCount = -1,
+			node;
+		
+		if (selection.focusNode) {
+			if (Cursor._isChildOf(selection.focusNode, parentElement)) {
+				node = selection.focusNode; 
+				charCount = selection.focusOffset;
+				
+				while (node) {
+					if (node === parentElement) {
+						break;
+					}
+					
+					if (node.previousSibling) {
+						node = node.previousSibling;
+						charCount += node.textContent.length;
+					} else {
+						node = node.parentNode;
+						if (node === null) {
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		return charCount;
+	}
+	
+	static setCurrentCursorPosition(chars, element) {
+		if (chars >= 0) {
+			var selection = window.getSelection();
+			
+			let range = Cursor._createRange(element, { count: chars });
+			
+			if (range) {
+				range.collapse(false);
+				selection.removeAllRanges();
+				selection.addRange(range);
+			}
 		}
 	}
 	
-	static setStartOffset(startOffset, element) {
-		var selection = window.getSelection();
-		// selection.removeAllRanges();
-		let range = document.createRange(); // do not use new Range(), it will not be associated with document
-		range.setStart(element, startOffset);
-		range.collapse(true);
-		selection.removeAllRanges();
-		selection.addRange(range);
-	}
-	
-	/*
-	static getStartOffset() {
-		var selection = window.getSelection();
-		if ( selection.getRangeAt && selection.rangeCount ) {
-			let range = selection.getRangeAt(0).cloneRange();
-			let startOffset = range.startOffset;
-			return startOffset;
+	static _createRange(node, chars, range) {
+		if (!range) {
+			range = document.createRange()
+			range.selectNode(node);
+			range.setStart(node, 0);
 		}
+		
+		if (chars.count === 0) {
+			range.setEnd(node, chars.count);
+		} else if (node && chars.count >0) {
+			if (node.nodeType === Node.TEXT_NODE) {
+				if (node.textContent.length < chars.count) {
+					chars.count -= node.textContent.length;
+				} else {
+					range.setEnd(node, chars.count);
+					chars.count = 0;
+				}
+			} else {
+				for (var lp = 0; lp < node.childNodes.length; lp++) {
+					range = Cursor._createRange(node.childNodes[lp], chars, range);
+
+					if (chars.count === 0) {
+					break;
+					}
+				}
+			}
+		} 
+		
+		return range;
 	}
 	
-	static setStartOffset(startOffset, element) {
-		var selection = window.getSelection();
-		// selection.removeAllRanges();
-		let range = new Range();
-		range.setStart(element, startOffset);
-		range.setEnd(element, startOffset);
-		selection.addRange(range);
+	static _isChildOf(node, parentElement) {
+		while (node !== null) {
+			if (node === parentElement) {
+				return true;
+			}
+			node = node.parentNode;
+		}
+		
+		return false;
 	}
-	*/
 }
 
 // This line not optional. Content loads top to bottom. Need to wait until DOM is fully loaded.
 window.addEventListener('DOMContentLoaded', (e) => {
-	let analyze = document.getElementById('analyze');
 	let json = document.getElementById('json');
 	let richText = document.getElementById('rich-text');
 	
-	// load filter tests into textarea, to be our defaults
+	// load filter test into textarea, to be our default text
 	let xmlhttp = new XMLHttpRequest();
 	xmlhttp.open('GET', 'test-good-filters.txt', false);
 	xmlhttp.send();
 	let text = xmlhttp.responseText + "\n\n";
-	
-	/*
-	xmlhttp = new XMLHttpRequest();
-	xmlhttp.open('GET', 'test-bad-filters.txt', false);
-	xmlhttp.send();
-	text += xmlhttp.responseText;
-	*/
-	
 	richText.innerHTML = text;
 	
 	richText.addEventListener('input', function(e) {
 		// In theory, we should need some escapeHTML's and unescapeHTML's around here. In actual testing, anything being written into the <textarea> by JS didn't need to be escaped.
-		let startOffset = Helper.getStartOffset();
+		let offset = Cursor.getCurrentCursorPosition(richText);
 		let block = new AdBlockSyntaxBlock();
 		block.parseRichText(richText.innerHTML);
 		json.value = block.json;
 		richText.innerHTML = block.richText;
-		Helper.setStartOffset(startOffset, richText);
+		Cursor.setCurrentCursorPosition(offset, richText);
 		richText.focus(); // blinks the cursor
 	});
 	
-	// When pasting into rich text editor, force plain text. Do not allow rich text or HTML. For example, the default copy/paste from VS Code is rich text. The formatting overrides our syntax highlighting.
+	// When pasting into rich text editor, force plain text. Do not allow rich text or HTML. For example, the default copy/paste from VS Code is rich text. Foreign formatting messes up our syntax highlighting.
 	richText.addEventListener("paste", function(e) {
 		// cancel paste
 		e.preventDefault();
