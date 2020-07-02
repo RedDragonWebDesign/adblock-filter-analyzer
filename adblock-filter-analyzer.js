@@ -111,10 +111,10 @@ class AdBlockSyntaxLine {
 		'htmlFilter': '', // ##^
 		'htmlFilterException': '', // #@#^
 		'abpExtendedSelector': '', // #?#
-		'actionOperator': '', // :style() :remove()
 		'uboScriptlet': '', // ##+js()
 		'uboScriptletException': '', // #@#+js()
 		'abpSnippet': '', // #$#
+		'actionOperator': '', // :style() :remove()
 	};
 	isValid = "not sure";
 	errorHint = "";
@@ -218,15 +218,13 @@ class AdBlockSyntaxLine {
 		}
 		
 		// @@exceptions may not contain any selectors except options
-		// @@ statements may not contain #@# ## #?# :style() :remove() #$#
-		/*
-			if ( this.toParse.search(/#@#|##|#\?#|:style\(|:remove\(|#\$#/) !== -1 ) {
-				this.errorHint = "@@ statements may not contain #@# ## #?# :style() :remove() #$#"
-			
-			And delete from lookForDomains()
-		*/
-		// TODO:
-		
+		count = Helper.countRegExMatches(s, /\#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|:style\(|:remove\(/);
+		let exception = ( this.syntax['exception'] || this.syntax['exceptionRegEx'] );
+		if ( exception && count ) {
+			this.errorHint = "@@ statements may not contain selector-ish syntax $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# or action operators :style() :remove()"
+			throw false;
+		}
+
 		
 		
 	}
@@ -301,10 +299,6 @@ class AdBlockSyntaxLine {
 		let domainException = false;
 		if ( this.string.left(2) === '@@' ) {
 			domainException = true;
-			if ( this.toParse.search(/#@#|##|#\?#|:style\(|:remove\(|#\$#/) !== -1 ) {
-				this.errorHint = "@@ statements may not contain #@# ## #?# :style() :remove() #$#"
-				throw false;
-			}
 		}
 		
 		// domain
