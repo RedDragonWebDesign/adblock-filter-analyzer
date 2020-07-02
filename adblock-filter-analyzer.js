@@ -135,6 +135,10 @@ class AdBlockSyntaxLine {
 	lookForErrors() {
 		let s = this.string;
 		
+		// no spaces in domains or domain regex
+			// delete duplicate code in lookForDomains()
+		
+		
 		// Delete regex. Regex is allowed to contain our special chars. When we do our searches, we don't want to get false positives.
 		s = s.replace(/^\/.*?[^\\]\//g, '');
 		s = s.replace(/^@@\/.*?[^\\]\//g, '@@');
@@ -158,6 +162,17 @@ class AdBlockSyntaxLine {
 		
 		
 		
+		
+		
+		
+		// @@ statements may not contain #@# ## #?# :style() :remove() #$#
+		/*
+			if ( this.toParse.search(/#@#|##|#\?#|:style\(|:remove\(|#\$#/) !== -1 ) {
+				this.errorHint = "@@ statements may not contain #@# ## #?# :style() :remove() #$#"
+			
+			And delete from lookForDomains()
+		*/
+
 		
 		
 		
@@ -230,6 +245,32 @@ class AdBlockSyntaxLine {
 	}
 	
 	lookForDomains() {
+		// domainRegEx /regex/
+		let matchPos = this.toParse.search(/^\/.*?[^\\]\//);
+		let regExLookingStringFound = (matchPos !== -1);
+		let toParse = this.toParse.replace(/^\/.*?[^\\]\//, '');
+		let regEx = this.toParse.left(this.toParse.length - toParse.length);
+		let selectorAfterRegEx = (toParse.search(/^(\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#)/) !== -1);
+		let nothingAfterRegEx = (toParse.length === 0);
+		if ( regExLookingStringFound && (selectorAfterRegEx || nothingAfterRegEx) ) {
+			this.syntax['domainRegEx'] = regEx;
+			this.toParse = toParse;
+			return;
+		}
+		
+		// exceptionRegEx @@/regex/
+		matchPos = this.toParse.search(/^@@\/.*?[^\\]\//);
+		regExLookingStringFound = (matchPos !== -1);
+		toParse = this.toParse.replace(/^@@\/.*?[^\\]\//, '');
+		regEx = this.toParse.left(this.toParse.length - toParse.length);
+		selectorAfterRegEx = (toParse.search(/^(\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#)/) !== -1);
+		nothingAfterRegEx = (toParse.length === 0);
+		if ( regExLookingStringFound && (selectorAfterRegEx || nothingAfterRegEx) ) {
+			this.syntax['domainRegEx'] = regEx;
+			this.toParse = toParse;
+			return;
+		}
+		
 		// exception @@
 		let domainException = false;
 		if ( this.string.left(2) === '@@' ) {
@@ -243,7 +284,7 @@ class AdBlockSyntaxLine {
 		// domain
 		// parse until $ #@# ## #?# #$#
 		// str.search returns first position, when searching from left to right (good)
-		let matchPos = this.toParse.search(/#@#|##|#\?#|#\$#|\$/);
+		matchPos = this.toParse.search(/#@#|##|#\?#|#\$#|\$/);
 		// if no categories after the domain
 		if ( matchPos === -1 ) {
 			this.syntax['domain'] = this.toParse;
@@ -269,33 +310,6 @@ class AdBlockSyntaxLine {
 		if ( domainException ) {
 			this.syntax['exception'] = this.syntax['domain'];
 			this.syntax['domain'] = "";
-		}
-		
-		// regex special case: /blahblah$/
-		// need to handle this carefully because of the $ sign, also used to indicate option
-		if ( this.toParse.left(2) === "$/" ) {
-			this.syntax['domain'] += "$/";
-			this.toParse = this.toParse.slice(2);
-		}
-		
-		// domainRegEx /domain/
-		if (
-			this.syntax['domain'] &&
-			this.syntax['domain'].left(1) === "/" &&
-			this.syntax['domain'].right(1) === "/"
-		) {
-			this.syntax['domainRegEx'] = this.syntax['domain'];
-			this.syntax['domain'] = "";
-		}
-		
-		// exceptionRegEx @@/domain/
-		if (
-			this.syntax['exception'] &&
-			this.syntax['exception'].left(3) === "@@/" &&
-			this.syntax['exception'].right(1) === "/"
-		) {
-			this.syntax['exceptionRegEx'] = this.syntax['exception'];
-			this.syntax['exception'] = "";
 		}
 	}
 	
