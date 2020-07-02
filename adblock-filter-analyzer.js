@@ -604,7 +604,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	let xmlhttp = new XMLHttpRequest();
 	xmlhttp.open('GET', 'test-good-filters.txt', false);
 	xmlhttp.send();
-	let text = xmlhttp.responseText + "\n\n";
+	let text = xmlhttp.responseText;
 	richText.innerHTML = text;
 	
 	richText.addEventListener('input', function(e) {
