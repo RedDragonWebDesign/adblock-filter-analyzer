@@ -32,6 +32,8 @@ class AdBlockSyntaxBlock {
 		s = s.replace(/<\/font>/g, "");
 		// remove &nbsp;
 		s = s.replace(/&nbsp;/g, " ");
+		// replace tab with 4 spaces
+		s = s.replace(/\t/g, "    ");
 		s = Helper.unescapeHTML(s);
 		this._parse(s);
 	}
