@@ -273,8 +273,8 @@ class AdBlockSyntaxLine {
 			throw "not sure";
 		}
 		
-		// comment !
-		if ( this.string.left(1) === '!' ) {
+		// comment ! [
+		if ( this.string.left(1) === '!' || this.string.left(1) === '[' ) {
 			this.syntax['comment'] = this.string;
 			throw true;
 		}

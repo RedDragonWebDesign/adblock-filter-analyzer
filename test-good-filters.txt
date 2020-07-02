@@ -3,6 +3,10 @@ bad filter
 
 ! comments
 !comment with no space at beginning. shows up red in VS Code highlighting. passes ubo validator.
+! ubo validator shows the below as comments
+[test]
+[ test
+[Nano Adblocker]
 
 ! uboPreParsingDirective !#
 !#include ublock-filters.txt

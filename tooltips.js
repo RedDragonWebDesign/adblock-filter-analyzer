@@ -25,7 +25,7 @@ export let tooltips =  {
 		</ul>`,
 	'comment': // !
 		`<ul>
-		<li>@syntax - !</li>
+		<li>@syntax - ! or [</li>
 		<li>@name - Comment</li>
 		<li>@description - </li>
 		<li>@example - ! this is a comment</li>

@@ -15,7 +15,7 @@
 	</h1>
 	
 	<p>
-	This is a tool into which you can copy/paste AdBlock filters (also known as Static Filter Syntax). It'll color code and it'll give you an explanation of what every piece of syntax does. Good for learning.
+	This is a tool into which you can copy/paste AdBlock filters (also known as Static Filter Syntax). It'll color code and it'll give you an explanation of what every piece of syntax does. Good for learning. Best viewed on desktop/laptop so you can hover over code and see the tooltips.
 	</p>
 	
 	<p>
