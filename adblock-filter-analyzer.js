@@ -133,19 +133,28 @@ class AdBlockSyntaxLine {
 	}
 	
 	lookForErrors() {
-		let s = this.string;
-		
 		// no spaces in domains or domain regex
-			// delete duplicate code in lookForDomains()
-		
+		if ( this.syntax['domainRegEx'] && this.syntax['domainRegEx'].search(/ /g) !== -1 ) {
+			this.errorHint = "no spaces allowed in domains, exceptions, domainRegEx, or exceptionRegEx";
+			throw false;
+		}
+		if ( this.syntax['domain'] && this.syntax['domain'].search(/ /g) !== -1 ) {
+			this.errorHint = "no spaces allowed in domains, exceptions, domainRegEx, or exceptionRegEx";
+			throw false;
+		}
+		if ( this.syntax['exceptionRegEx'] && this.syntax['exceptionRegEx'].search(/ /g) !== -1 ) {
+			this.errorHint = "no spaces allowed in domains, exceptions, domainRegEx, or exceptionRegEx";
+			throw false;
+		}
+		if ( this.syntax['exception'] && this.syntax['exception'].search(/ /g) !== -1 ) {
+			this.errorHint = "no spaces allowed in domains, exceptions, domainRegEx, or exceptionRegEx";
+			throw false;
+		}
 		
 		// Delete regex. Regex is allowed to contain our special chars. When we do our searches, we don't want to get false positives.
+		let s = this.string;
 		s = s.replace(/^\/.*?[^\\]\//g, '');
 		s = s.replace(/^@@\/.*?[^\\]\//g, '@@');
-		
-		// TODO: css can have $ sign, +js can have $ sign
-		
-		
 		
 		// look for double selectors
 		// had to take out $, too many false positives, it's used in CSS and +js()
@@ -156,8 +165,11 @@ class AdBlockSyntaxLine {
 		}
 		
 		// look for double actionOperators
-		
-		
+		count = Helper.countRegExMatches(s, /:style\(|:remove\(/);
+		if ( count > 1 ) {
+			this.errorHint = "actionOperators :style() :remove() are only allowed once per filter";
+			throw false;
+		}
 		
 		// actionOperators only allowed in specific cases
 		
@@ -295,12 +307,6 @@ class AdBlockSyntaxLine {
 			this.toParse = this.toParse.slice(matchPos);
 		}
 		
-		// no spaces allowed in domain name
-		if ( this.syntax['domain'] && this.syntax['domain'].search(/ /) !== -1 ) {
-			this.errorHint = "no spaces allowed in domain name";
-			throw false;
-		}
-		
 		// exception @@ must have a domain
 		if ( domainException && ! this.syntax['domain'] ) {
 			this.errorHint = "exception @@ must have a domain";
@@ -386,12 +392,6 @@ class AdBlockSyntaxLine {
 				this.syntax['selector'] = this.toParse.left(matchPos);
 				this.toParse = this.toParse.slice(matchPos);
 				this.syntax['actionOperator'] = this.toParse;
-				
-				let matches = Helper.countRegExMatches(this.toParse, /:style\(|:remove\(/);
-				if ( matches > 1 ) {
-					this.errorHint = "Can't have action operators :style() :remove() more than once.";
-					throw false;
-				}
 			}
 		}
 		
@@ -408,12 +408,6 @@ class AdBlockSyntaxLine {
 				this.syntax['abpExtendedSelector'] = this.toParse.left(matchPos);
 				this.toParse = this.toParse.slice(matchPos);
 				this.syntax['actionOperator'] = this.toParse;
-				
-				let matches = Helper.countRegExMatches(this.toParse, /:style\(|:remove\(/);
-				if ( matches > 1 ) {
-					this.errorHint = "Can't have action operators :style() :remove() more than once.";
-					throw false;
-				}
 			}
 		}
 	}
