@@ -3,7 +3,7 @@
 <html lang="en-us">
 
 <head>
-	<title>AdBlock Filter Syntax Analyzer</title>
+	<title>AdBlock Filter Analyzer</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="style.css">
 	<script src="adblock-filter-analyzer.js"></script>
@@ -11,7 +11,7 @@
 
 <body>
 	<h1>
-	AdBlock Filter Syntax Analyzer
+	AdBlock Filter Analyzer
 	</h1>
 	
 	<p>
@@ -32,7 +32,7 @@
 	</p>
 	
 	<p>
-	<a href="tooltips.php">List Of Syntax Types</a>
+	<a href="tooltips.php">List Of Categories</a>
 	</p>
 	
 	<p>

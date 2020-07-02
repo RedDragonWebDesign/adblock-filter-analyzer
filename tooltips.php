@@ -3,7 +3,7 @@
 <html lang="en-us">
 
 <head>
-	<title>AdBlock Filter Syntax Categories</title>
+	<title>AdBlock Filter Categories</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="style.css">
 	<script src="tooltips.js"></script>
@@ -11,7 +11,7 @@
 
 <body>
 	<h1>
-	AdBlock Filter Syntax Categories
+	AdBlock Filter Categories
 	</h1>
 	
 	<div id="viewer">
