@@ -340,6 +340,13 @@ class AdBlockSyntaxLine {
 		// uboScriptlet ##+js(
 		if ( this.toParse.left(6) === "##+js(" ) {
 			this.syntax['uboScriptlet'] = this.toParse;
+			
+			// per ublock documentation, example.com##+js() when js() is empty is an error
+			if ( this.syntax['uboScriptlet'] === "##+js()" ) {
+				this.errorHint = "per ublock documentation, example.com##+js() when js() is empty is an error";
+				throw false;
+			}
+			
 			// Nothing allowed after it
 			throw "not sure";
 		}
