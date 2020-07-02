@@ -78,23 +78,23 @@ class AdBlockSyntaxLine {
 	toParse = "";
 	// TODO: refactor this to have sub arrays, such as "code", "isValid", "tooltipText", etc.
 	syntax = {
-		'uboPreParsingDirective': '',
-		'agHint': '', // AdGuard Hint (similar to UBO pre-parsing directive)
-		'comment': '',
-		'exception': '',
-		'exceptionRegEx': '',
-		'domainRegEx': '',
+		'uboPreParsingDirective': '', // !#
+		'agHint': '', // !+
+		'comment': '', // !
+		'exception': '', // @@
+		'exceptionRegEx': '', // @@/regex/
+		'domainRegEx': '', // /regex/
 		'domain': '',
-		'option': '',
-		'selectorException': '',
-		'selector': '',
-		'htmlFilter': '',
-		'htmlFilterException': '',
-		'abpExtendedSelector': '',
-		'actionOperator': '',
-		'uboScriptlet': '',
-		'uboScriptletException': '',
-		'abpSnippet': '',
+		'option': '', // $
+		'selectorException': '', // #@#
+		'selector': '', // ##
+		'htmlFilter': '', // ##^
+		'htmlFilterException': '', // #@#^
+		'abpExtendedSelector': '', // #?#
+		'actionOperator': '', // :style() :remove()
+		'uboScriptlet': '', // ##+js()
+		'uboScriptletException': '', // #@#+js()
+		'abpSnippet': '', // #$#
 	};
 	isValid = "not sure";
 	errorHint = "";
@@ -109,13 +109,88 @@ class AdBlockSyntaxLine {
 			this.validateEachCategory();
 			// TODO: this.genericOrSpecific(); // https://help.eyeo.com/en/adblockplus/how-to-write-filters#generic-specific
 		} catch(e) {
-			this.isValid = e;
+			// only catch what we want, let actual errors throw to console
+			if ( e === true || e === false || e === "not sure" ) {
+				this.isValid = e;
+			} else {
+				throw e;
+			}
 		}
 		
-		this.checkForMismatch();
+		if ( this.isValid !== true ) {
+			try {
+				this.lookForErrors();
+			} catch(e) {
+				// only catch what we want, let actual errors throw to console
+				if ( e === true || e === false || e === "not sure" ) {
+					this.isValid = e;
+				} else {
+					throw e;
+				}
+			}
+		}
+		this.lookForMismatch();
 	}
 	
-	checkForMismatch() {
+	lookForErrors() {
+		let s = this.string;
+		
+		// Delete regex. Regex is allowed to contain our special chars. When we do our searches, we don't want to get false positives.
+		s = s.replace(/^\/.*?[^\\]\//g, '');
+		s = s.replace(/^@@\/.*?[^\\]\//g, '@@');
+		
+		// TODO: css can have $ sign
+		
+		
+		
+		// look for double selectors
+		let count = Helper.countRegExMatches(s, /\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#/);
+		if ( count > 1 ) {
+			this.errorHint = "selector type syntax $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# is only allowed once per filter";
+			throw false;
+		}
+		
+		// look for double actionOperators
+		
+		
+		
+		// actionOperators only allowed in specific cases
+		
+		
+		
+		
+		
+		
+		// @@exceptions may not contain any selectors except options
+		// actionOperator can only be used with ## #?# and maybe some others
+		// only one selector per filter
+		// only one action operator per filter
+		
+		/*
+		! can't have things twice
+		example.com##test#?#test:style(position: absolute !important;)
+		example.com#?#test##test:style(position: absolute !important;)
+		example.com##test:style(position: absolute !important;):style(position: absolute !important;)
+		example.com#?#test:style(position: absolute !important;):style(position: absolute !important;)
+		example.com##test#@#test
+		example.com##test#?#test
+		example.com#?#test##test
+		
+		! action operators :style() and :remove() are not allowed to be applied in many cases
+		example.com##^.badstuff:style(position: absolute !important;)
+		example.com##^.badstuff:remove(position: absolute !important;)
+		example.com#@#^.badstuff:style(position: absolute !important;)
+		example.com#@#^.badstuff:remove(position: absolute !important;)
+		example.com#@#.badstuff:style(position: absolute !important;)
+		example.com#@#.badstuff:remove(position: absolute !important;)
+		tribunnews.com##+js(acis, Math, ='\x):style(position: absolute !important;)
+		test.com$websocket:style(position: absolute !important;)
+		audiofanzine.com#$#abort-on-property-read TextDecoder:style(position: absolute !important;)
+		*/
+		
+	}
+	
+	lookForMismatch() {
 		let lineString = "";
 		for ( let key in this.syntax ) {
 			lineString += this.syntax[key];
@@ -126,31 +201,38 @@ class AdBlockSyntaxLine {
 		}
 	}
 	
-	/** dice syntax string up into the 9 categories: comment !, exception @@, domain, option $, selectorException #@#, selector ##, abpExtendedSelector #?#, actionoperator :style(), and abpSnippet #$# */
+	/** dice syntax string up into categories: comment !, exception @@, domain, option $, selectorException #@#, selector ##, abpExtendedSelector #?#, actionoperator :style(), abpSnippet #$#, etc. */
 	categorizeSyntax() {
+		this.lookForComments();
+		this.lookForDomains();
+		this.lookForSelectors();
+		this.lookForActionOperators();
+	}
+		
+	lookForComments() {	
 		// uboPreParsingDirective !#
-		let nextTwo = this.toParse.slice(0, 2);
-		if ( nextTwo == "!#" ) {
+		if ( this.toParse.left(2) === "!#" ) {
 			this.syntax['uboPreParsingDirective'] = this.string;
-			return;
+			throw "not sure";
 		}
 		
 		// agHint !+
-		nextTwo = this.toParse.slice(0, 2);
-		if ( nextTwo == "!+" ) {
+		if ( this.toParse.left(2) === "!+" ) {
 			this.syntax['agHint'] = this.string;
-			return;
+			throw "not sure";
 		}
 		
 		// comment !
-		if ( this.string[0] == '!' ) {
+		if ( this.string.left(1) === '!' ) {
 			this.syntax['comment'] = this.string;
 			throw true;
 		}
-		
+	}
+	
+	lookForDomains() {
 		// exception @@
 		let domainException = false;
-		if ( this.string[0] == '@' && this.string[1] == '@' ) {
+		if ( this.string.left(2) === '@@' ) {
 			domainException = true;
 			if ( this.toParse.search(/#@#|##|#\?#|:style\(|:remove\(|#\$#/) !== -1 ) {
 				this.errorHint = "@@ statements may not contain #@# ## #?# :style() :remove() #$#"
@@ -167,15 +249,17 @@ class AdBlockSyntaxLine {
 			this.syntax['domain'] = this.toParse;
 			this.toParse = '';
 		} else {
-			this.syntax['domain'] = this.toParse.slice(0, matchPos);
+			this.syntax['domain'] = this.toParse.left(matchPos);
 			this.toParse = this.toParse.slice(matchPos);
 		}
 		
+		// no spaces allowed in domain name
 		if ( this.syntax['domain'] && this.syntax['domain'].search(/ /) !== -1 ) {
 			this.errorHint = "no spaces allowed in domain name";
 			throw false;
 		}
 		
+		// exception @@ must have a domain
 		if ( domainException && ! this.syntax['domain'] ) {
 			this.errorHint = "exception @@ must have a domain";
 			throw false;
@@ -189,7 +273,7 @@ class AdBlockSyntaxLine {
 		
 		// regex special case: /blahblah$/
 		// need to handle this carefully because of the $ sign, also used to indicate option
-		if ( Helper.left(this.toParse, 2) == "$/" ) {
+		if ( this.toParse.left(2) === "$/" ) {
 			this.syntax['domain'] += "$/";
 			this.toParse = this.toParse.slice(2);
 		}
@@ -197,87 +281,87 @@ class AdBlockSyntaxLine {
 		// domainRegEx /domain/
 		if (
 			this.syntax['domain'] &&
-			Helper.left(this.syntax['domain'], 1) == "/" &&
-			Helper.right(this.syntax['domain'], 1) == "/"
+			this.syntax['domain'].left(1) === "/" &&
+			this.syntax['domain'].right(1) === "/"
 		) {
 			this.syntax['domainRegEx'] = this.syntax['domain'];
 			this.syntax['domain'] = "";
 		}
 		
 		// exceptionRegEx @@/domain/
-		if ( this.syntax['exception'] && Helper.left(this.syntax['exception'], 3) == "@@/" && Helper.right(this.syntax['exception'], 1) == "/" ) {
+		if (
+			this.syntax['exception'] &&
+			this.syntax['exception'].left(3) === "@@/" &&
+			this.syntax['exception'].right(1) === "/"
+		) {
 			this.syntax['exceptionRegEx'] = this.syntax['exception'];
 			this.syntax['exception'] = "";
 		}
-		
+	}
+	
+	lookForSelectors() {
 		// option $ (example: image)
-		if ( this.toParse[0] == '$' ) {
+		if ( this.toParse.left(1) === '$' ) {
 			this.syntax['option'] = this.toParse;
 			// OK to have nothing before it
 			// Nothing allowed after it
-			return;
+			throw "not sure";
 		}
 		
 		// abpSnippet #$# (example: log hello world!)
-		let nextThree = this.toParse.slice(0, 3);
-		if ( nextThree == "#$#" ) {
+		if ( this.toParse.left(3) === "#$#" ) {
 			this.syntax['abpSnippet'] = this.toParse;
 			// Nothing allowed after it
-			return;
+			throw "not sure";
 		}
 		
 		// uboScriptletException #@#+js(
-		let nextSeven = Helper.left(this.toParse, 7);
-		if ( nextSeven == "#@#+js(" ) {
+		if ( this.toParse.left(7) === "#@#+js(" ) {
 			this.syntax['uboScriptletException'] = this.toParse;
 			// Nothing allowed after it
-			return;
+			throw "not sure";
 		}
 		
 		// uboScriptlet ##+js(
-		let nextSix = Helper.left(this.toParse, 6);
-		if ( nextSix == "##+js(" ) {
+		if ( this.toParse.left(6) === "##+js(" ) {
 			this.syntax['uboScriptlet'] = this.toParse;
 			// Nothing allowed after it
-			return;
+			throw "not sure";
 		}
 		
 		// htmlFilter ##^
-		nextThree = this.toParse.slice(0, 3);
-		if ( nextThree == "##^" ) {
+		if ( this.toParse.left(3) === "##^" ) {
 			this.syntax['htmlFilter'] = this.toParse;
 			// Nothing allowed after it
-			return;
+			throw "not sure";
 		}
 		
 		// htmlFilterException #@#^
-		let nextFour = this.toParse.slice(0, 4);
-		if ( nextFour == "#@#^" ) {
+		if ( this.toParse.left(4) === "#@#^" ) {
 			this.syntax['htmlFilterException'] = this.toParse;
 			// Nothing allowed after it
-			return;
+			throw "not sure";
 		}
 		
 		// selectorException #@#
-		nextThree = this.toParse.slice(0, 3);
-		if ( nextThree == "#@#" ) {
+		if ( this.toParse.left(3) === "#@#" ) {
 			this.syntax['selectorException'] = this.toParse;
 			// Nothing allowed after it
-			return;
+			throw "not sure";
 		}
 		
+		let matchPos;
 		// selector ##
-		nextTwo = this.toParse.slice(0, 2);
-		if ( nextTwo == "##" ) {
+		if ( this.toParse.left(2) === "##" ) {
 			// parse until :style() or :remove() encountered
 			matchPos = this.toParse.search(/:style\(|:remove\(/);
 			
 			// if no action operators
 			if ( matchPos === -1 ) {
 				this.syntax['selector'] = this.toParse;
-				return;
+				throw "not sure";
 			} else {
-				this.syntax['selector'] = this.toParse.slice(0, matchPos);
+				this.syntax['selector'] = this.toParse.left(matchPos);
 				this.toParse = this.toParse.slice(matchPos);
 				this.syntax['actionOperator'] = this.toParse;
 				
@@ -290,17 +374,16 @@ class AdBlockSyntaxLine {
 		}
 		
 		// abpExtendedSelector #?#
-		nextThree = this.toParse.slice(0, 3);
-		if ( nextThree == "#?#" ) {
+		if ( this.toParse.left(3) === "#?#" ) {
 			// parse until :style() or :remove() encountered
 			matchPos = this.toParse.search(/:style\(|:remove\(/);
 			
 			// if no action operators
 			if ( matchPos === -1 ) {
 				this.syntax['abpExtendedSelector'] = this.toParse;
-				return;
+				throw "not sure";
 			} else {
-				this.syntax['abpExtendedSelector'] = this.toParse.slice(0, matchPos);
+				this.syntax['abpExtendedSelector'] = this.toParse.left(matchPos);
 				this.toParse = this.toParse.slice(matchPos);
 				this.syntax['actionOperator'] = this.toParse;
 				
@@ -311,6 +394,10 @@ class AdBlockSyntaxLine {
 				}
 			}
 		}
+	}
+	
+	lookForActionOperators() {
+		
 	}
 	
 	/** split commas */
@@ -367,30 +454,20 @@ class AdBlockSyntaxLine {
 		return richText;
 	}
 }
-// module.exports = analyze;
 
-/*
-class AdBlock {
-	static isValid(inputString) {
-		stack = [];
-		closingStack = []; // Punctuation that we need to see by the end of the line for syntax to be valid. Closing parentheses actionoperator things like ) ] }
-		
-		
-		
-		return true;
+Object.assign(String.prototype, {
+	/** @description "Testing 123".left(4) = "test" */
+	left(length) {
+		return this.slice(0, length);
+	},
+	
+	/** @description "Testing 123".right(3) = "123" */
+	right(length) {
+		return this.substr(this.length - length);
 	}
-}
-*/
+});
 
 class Helper {
-	static left(string, length) {
-		return string.slice(0, length);
-	}
-	
-	static right(string, length) {
-		return string.substr(string.length - length)
-	}
-	
 	static countRegExMatches(str, regExPattern) {
 		regExPattern = new RegExp(regExPattern, "g");
 		return ((str || '').match(regExPattern) || []).length;
@@ -426,10 +503,10 @@ class Helper {
 	static setStartOffset(startOffset, element) {
 		var selection = window.getSelection();
 		// selection.removeAllRanges();
-		let range = new Range();
+		let range = document.createRange(); // do not use new Range(), it will not be associated with document
 		range.setStart(element, startOffset);
 		range.collapse(true);
-		// selection.removeAllRanges();
+		selection.removeAllRanges();
 		selection.addRange(range);
 	}
 	

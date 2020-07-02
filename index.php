@@ -6,7 +6,7 @@
 	<title>AdBlock Filter Syntax Analyzer</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="style.css">
-	<script src="adblock-validator.js"></script>
+	<script src="adblock-filter-analyzer.js"></script>
 </head>
 
 <body>
@@ -36,7 +36,7 @@
 	</p>
 	
 	<p>
-	Want to report a bug or request a feature? <a href="https://github.com/GeneralKenobi1/adblock-validator/issues">Create an issue</a> on our GitHub.
+	Want to report a bug or request a feature? <a href="https://github.com/GeneralKenobi1/adblock-filter-analyzer/issues">Create an issue</a> on our GitHub.
 	</p>
 	
 	<p>

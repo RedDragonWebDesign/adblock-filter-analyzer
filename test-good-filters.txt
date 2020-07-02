@@ -1,6 +1,9 @@
 ! one bad filter, for testing purposes
 bad filter
 
+! comments
+!comment with no space at beginning. shows up red in VS Code highlighting. passes ubo validator.
+
 ! uboPreParsingDirective !#
 !#include ublock-filters.txt
 !#include ublock/filters.txt
@@ -27,7 +30,6 @@ www.reuters.com##div[class="slide-image-enclosure "] > img[src*="s3.reutersmedia
 ago.vermont.gov##.navhead.rad div[style="display: block; width: 1200px; height: 29px; float: left;"]
 golfdigest.com##.component-sticky.site-header div[style*="overflow: hidden; height:"]
 www.yahoo.com##[class*="fixed-space"][class*="modal-open"]
-hdblog.it#@#a[href^="https://www.amazon."][href*="tag="]
 
 ! #$# - snippets
 audiofanzine.com#$#abort-on-property-read TextDecoder; abort-on-property-read require; abort-current-inline-script _audiofanzineProductStack
@@ -38,10 +40,10 @@ zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read BetterJsPo
 ! exception @@
 @@||100percentfedup.com^$generichide
 @@||cdn.optimizely.com/js/*.js$domain=compassion.com|creditsesame.com|freeshipping.com|heroku.com|imageshack.com
-@@/100percentfedup.com/$generichide
 
 ! exception #@#
 abcnews.go.com#@#.social-footer-wrapper
+hdblog.it#@#a[href^="https://www.amazon."][href*="tag="]
 
 ! ##+js()
 upload4earn.org##+js(ra, checked)
@@ -51,6 +53,8 @@ pornve.com##+js(set, frg, 1)
 pornve.com##+js(window.open-defuser)
 youtube.com##+js(json-prune, playerResponse.adPlacements playerResponse.playerAds adPlacements playerAds)
 freenet.de##+js(acis, document.createElement, /\}\s*\(.*?\b(self|this|window)\b.*?\)/)
+
+! #@#+js() exception
 ! per ublock documentation
 example.com#@#+js()
 ! per ublock documentation
@@ -90,6 +94,20 @@ newsbreak24.de#@#^script:has-text(===):has-text(/[\w\W]{14000}/)
 /.*(\/proxy|\.wasm|\.wsm|\.wa)$/$websocket,xmlhttprequest,domain=reactor.cc|sickrage.ca|sorteosrd.com|streamplay.to
 /^test$/
 /^test$/$websocket
+/^https:\/\/([a-z]+\.)?sythe\.org\/\[=%#@$&!^].*[\w\W]{20,}/$image
+/##/
+/##^/
+/@@/
+/test$/
+/#@#/
+/#@#^/
+/#?#/
+/:style/
+/##+js/
+/#@#+js/
+
+! RegEx exception @@/regex/
+@@/100percentfedup\.com/$generichide
 @@/https?:\/\/.*[=|&|%|#|+].*/$popup,domain=animeflv.net|jkanime.net
 
 ! escape character \
@@ -100,14 +118,7 @@ google.*###center_col > #\5f Emc
 webmail.freenet.de#@#+js(acis, document.createElement, /\}\s*\(.*?\b(self|this|window)\b.*?\)/)
 wize.life##^script:has-text(===):has-text(/[\w\W]{16000}/)
 
-! domain wildcard *
-&ctxId=*&pubId=*&clientDT=
-
-! exclude ~
-.snowplowanalytics.$domain=~snowplowanalytics.com
-
-! domain name anchor ||
-! It will match on boundaries of domains - where dots in domains are. ||example.com will match another.example.com but not badexample.com.
+! domain stuff * ^ | || ,
 ||izooto.com^$script,domain=bloombergquint.com|dnaindia.com
 ||lightboxcdn.com/vendor/*$domain=cnet.com
 ||picreel.com^$subdocument
@@ -116,20 +127,16 @@ wize.life##^script:has-text(===):has-text(/[\w\W]{16000}/)
 ||pico.tools^
 ||athenainstitute.biz^$third-party
 ||menshealth.com/*/advagg_js$script,domain=menshealth.com
-
-! start & end anchors
-! Marks start or end of the URL
 |https://$3p,script,domain=mac-torrent-download.net,badfilter
 badscript.js|
 |https://www.test.com/url|
-
-! any domain punctuation ^
 ||atoshonetwork.com^$third-party
+trk*.vidible.tv
+&ctxId=*&pubId=*&clientDT=
 
-! domain= or operator |
+! options $ and option stuff ~ = | ,
+.snowplowanalytics.$domain=~snowplowanalytics.com
 $third-party,xmlhttprequest,domain=alltube.pl|alltube.tv
-
-! options $
 ! the following 3 are short aliases of other commands
 $ghide
 $shide

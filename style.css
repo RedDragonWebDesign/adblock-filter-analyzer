@@ -40,4 +40,4 @@ body {
 .uboScriptlet {background-color: pink}
 .uboScriptletException {background-color: aqua}
 .abpSnippet {background-color: #569CD6; color: white;}
-.error {background-color: red !important;}
+.error {background-color: red !important; color: black;}

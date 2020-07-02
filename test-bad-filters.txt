@@ -1,3 +1,7 @@
+! no spaces allowed in domain name filters
+te st
+/reg ex/
+
 ! per ublock documentation
 example.com##+js()
 
@@ -71,6 +75,7 @@ example.com##test:style(width: bob px;)
 /([A--Z])\w+/
 /([A-Z]()\w+/
 /([A-Z])\w|+/
+/:style(/
 
 ! invalid URL (in domain name)
 ! https://help.dragonmetrics.com/en/articles/213986-invalid-characters-in-url

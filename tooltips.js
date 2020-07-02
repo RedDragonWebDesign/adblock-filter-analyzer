@@ -101,7 +101,7 @@ export let tooltips =  {
 		<li>@example - $script,domain=bloombergquint.com|dnaindia.com</li>
 		<li>@documentation - <a href="https://help.eyeo.com/en/adblockplus/how-to-write-filters#options">AdBlockPlus How To</a></li>
 		<li>@plugin-variations - </li>
-		<li>@special-characters - ~except |or ,multiple</li>
+		<li>@special-characters - ~except |or ,multiple =list</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
 		</ul>`,
