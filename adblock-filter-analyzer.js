@@ -27,6 +27,14 @@ class AdBlockSyntaxBlock {
 		this._parse(s);
 	}
 	
+	getRichText() {
+		return this.richText;
+	}
+	
+	getJSON() {
+		return this.json;
+	}
+	
 	_parse(s) {
 		this.string = s;
 		let lines = s.split("\n");
@@ -619,8 +627,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		let offset = Cursor.getCurrentCursorPosition(richText);
 		let block = new AdBlockSyntaxBlock();
 		block.parseRichText(richText.innerHTML);
-		json.value = block.json;
-		richText.innerHTML = block.richText;
+		json.value = block.getJSON();
+		richText.innerHTML = block.getRichText();
 		Cursor.setCurrentCursorPosition(offset, richText);
 		richText.focus(); // blinks the cursor
 	});
