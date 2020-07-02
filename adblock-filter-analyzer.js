@@ -24,6 +24,15 @@ class AdBlockSyntaxBlock {
 		s = s.replace(/<\/span>/g, "");
 		// convert <br /> to \n
 		s = s.replace(/<br>/g, "\n");
+		// remove <div> </div> - these are placed when the user hits enter
+		s = s.replace(/<div>/g, "\n");
+		s = s.replace(/<\/div>/g, "");
+		// remove <font color="#000000"> </font> - these are placed when the user hits enter
+		s = s.replace(/<font.*?>/g, "");
+		s = s.replace(/<\/font>/g, "");
+		// remove &nbsp;
+		s = s.replace(/&nbsp;/g, " ");
+		s = Helper.unescapeHTML(s);
 		this._parse(s);
 	}
 	
@@ -165,11 +174,11 @@ class AdBlockSyntaxLine {
 		s = s.replace(/^\/.*?[^\\]\//g, '');
 		s = s.replace(/^@@\/.*?[^\\]\//g, '@@');
 		
-		// look for double selectors
+		// look for double selectors $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$#
 		// had to take out $, too many false positives, it's used in CSS and +js()
 		let count = Helper.countRegExMatches(s, /\#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#/);
 		if ( count > 1 ) {
-			this.errorHint = "selector type syntax $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# is only allowed once per filter";
+			this.errorHint = "selector-ish syntax $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# is only allowed once per filter";
 			throw false;
 		}
 		
@@ -205,11 +214,8 @@ class AdBlockSyntaxLine {
 			this.errorHint = "actionOperators :style() :remove() cannot be used with ##+js( #@#+js( #$# $";
 			throw false;
 		}
-	
 		
-		
-		
-		
+		// @@exceptions may not contain any selectors except options
 		// @@ statements may not contain #@# ## #?# :style() :remove() #$#
 		/*
 			if ( this.toParse.search(/#@#|##|#\?#|:style\(|:remove\(|#\$#/) !== -1 ) {
@@ -217,36 +223,9 @@ class AdBlockSyntaxLine {
 			
 			And delete from lookForDomains()
 		*/
-
+		// TODO:
 		
 		
-		
-		// @@exceptions may not contain any selectors except options
-		// actionOperator can only be used with ## #?# and maybe some others
-		// only one selector per filter
-		// only one action operator per filter
-		
-		/*
-		! can't have things twice
-		example.com##test#?#test:style(position: absolute !important;)
-		example.com#?#test##test:style(position: absolute !important;)
-		example.com##test:style(position: absolute !important;):style(position: absolute !important;)
-		example.com#?#test:style(position: absolute !important;):style(position: absolute !important;)
-		example.com##test#@#test
-		example.com##test#?#test
-		example.com#?#test##test
-		
-		! action operators :style() and :remove() are not allowed to be applied in many cases
-		example.com##^.badstuff:style(position: absolute !important;)
-		example.com##^.badstuff:remove(position: absolute !important;)
-		example.com#@#^.badstuff:style(position: absolute !important;)
-		example.com#@#^.badstuff:remove(position: absolute !important;)
-		example.com#@#.badstuff:style(position: absolute !important;)
-		example.com#@#.badstuff:remove(position: absolute !important;)
-		tribunnews.com##+js(acis, Math, ='\x):style(position: absolute !important;)
-		test.com$websocket:style(position: absolute !important;)
-		audiofanzine.com#$#abort-on-property-read TextDecoder:style(position: absolute !important;)
-		*/
 		
 	}
 	
@@ -435,7 +414,8 @@ class AdBlockSyntaxLine {
 		// selector - split by commas
 		// abpExtendedSelector - split by commas
 		// selectorException - split by commas
-		// abpSnippet - split by )+js( for top level, commas for second level
+		// uboScriptlet - split by commas for second level
+		// abpSnippet - split by semicolon
 		// actionoperator - split by SEMICOLONS
 	}
 	
@@ -476,7 +456,10 @@ class AdBlockSyntaxLine {
 				classes += " error";
 			}
 			if ( this.syntax[key] ) {
-				richText += '<span class="' + classes + '">' + this.syntax[key] + '</span>';
+				let s = this.syntax[key];
+				s = Helper.escapeHTML(s);
+				s = s.replace(/  /g, " &nbsp;");
+				richText += '<span class="' + classes + '">' + s + '</span>';
 			}
 		}
 		return richText;
@@ -517,11 +500,11 @@ class Helper {
 	
 	static unescapeHTML(input) {
 		return input
-			.replace("&amp;", /&/g)
-			.replace("&lt;", /</g)
-			.replace("&gt;", />/g)
-			.replace("&quot;", /"/g)
-			.replace("&#039;", /'/g);
+			.replace(/&amp;/g, "&")
+			.replace(/&lt;/g, "<")
+			.replace(/&gt;/g, ">")
+			.replace(/&quot;/g, "\"")
+			.replace(/&#039;/g, "'");
 	}
 }
 
