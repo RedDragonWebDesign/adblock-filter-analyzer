@@ -49,6 +49,7 @@ class AdBlockSyntaxBlock {
 			}
 			this.richText += "<br />";
 		}
+		this.richText = this.richText.chopRight(6);
 		
 		this.json = this.countTrue + " valid, "
 			+ this.countNotSure + " unsure, "
@@ -491,7 +492,12 @@ Object.assign(String.prototype, {
 	/** @description "Testing 123".right(3) = "123" */
 	right(length) {
 		return this.substr(this.length - length);
-	}
+	},
+	
+	/** take a string, and chop off the amount of text on the right specified, leaving the text on the left */
+	chopRight(length) {
+		return this.slice(0, this.length - length);
+	},
 });
 
 class Helper {
