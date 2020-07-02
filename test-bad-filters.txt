@@ -17,15 +17,18 @@ example.com##test#?#test
 example.com#?#test##test
 
 ! action operators :style() and :remove() are not allowed to be applied in many cases
-example.com##^.badstuff:style(position: absolute !important;)
-example.com##^.badstuff:remove(position: absolute !important;)
-example.com#@#^.badstuff:style(position: absolute !important;)
-example.com#@#^.badstuff:remove(position: absolute !important;)
-example.com#@#.badstuff:style(position: absolute !important;)
-example.com#@#.badstuff:remove(position: absolute !important;)
+! put both style and remove, sometimes ubo validator says yes for style and no for remove
 tribunnews.com##+js(acis, Math, ='\x):style(position: absolute !important;)
-test.com$websocket:style(position: absolute !important;)
+tribunnews.com##+js(acis, Math, ='\x):remove(position: absolute !important;)
+tribunnews.com#@#+js(acis, Math, ='\x):style(position: absolute !important;)
+tribunnews.com#@#+js(acis, Math, ='\x):remove(position: absolute !important;)
 audiofanzine.com#$#abort-on-property-read TextDecoder:style(position: absolute !important;)
+audiofanzine.com#$#abort-on-property-read TextDecoder:remove(position: absolute !important;)
+test.com$websocket:style(position: absolute !important;)
+test.com$websocket:remove(position: absolute !important;)
+
+! action operators must have domain
+##.test:style(position: absolute !important;)
 
 ! no commas allowed in regex filters
 /test/,/test2/##hello

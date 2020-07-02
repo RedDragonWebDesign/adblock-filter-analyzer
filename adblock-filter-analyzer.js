@@ -171,9 +171,32 @@ class AdBlockSyntaxLine {
 			throw false;
 		}
 		
-		// actionOperators only allowed in specific cases
+		// actionOperators must be paired with a domain
+		let domainPresent = (
+			this.syntax['domain'] ||
+			this.syntax['exception'] ||
+			this.syntax['domainRegEx'] ||
+			this.syntax['exceptionRegEx']
+		);
+		if ( this.syntax['actionOperator'] && ! domainPresent ) {
+			this.errorHint = "actionOperators :style() :remove() must be used with a URL";
+			throw false;
+		}
 		
-		
+		// actionOperators not allowed to be paired with ##+js( #@#+js( #$# $
+		// TODO: probably also need to ban pairing with #@#|##|##^|#@#^|#?#| but so far :style() passes ubo validator, :remove() fails
+		let bannedSyntaxPresent = (
+			this.syntax['uboScriptlet'] ||
+			this.syntax['uboScriptletException'] ||
+			this.syntax['abpSnippet'] ||
+			this.syntax['option']
+		);
+		let countActionOperators = Helper.countRegExMatches(s, /:style\(|:remove\(/);
+		if ( bannedSyntaxPresent && countActionOperators ) {
+			this.errorHint = "actionOperators :style() :remove() cannot be used with ##+js( #@#+js( #$# $";
+			throw false;
+		}
+	
 		
 		
 		
@@ -233,8 +256,8 @@ class AdBlockSyntaxLine {
 	categorizeSyntax() {
 		this.lookForComments();
 		this.lookForDomains();
-		this.lookForSelectors();
 		this.lookForActionOperators();
+		this.lookForSelectors();
 	}
 		
 	lookForComments() {	
@@ -360,60 +383,40 @@ class AdBlockSyntaxLine {
 		// htmlFilter ##^
 		if ( this.toParse.left(3) === "##^" ) {
 			this.syntax['htmlFilter'] = this.toParse;
-			// Nothing allowed after it
-			throw "not sure";
+			return;
 		}
 		
 		// htmlFilterException #@#^
 		if ( this.toParse.left(4) === "#@#^" ) {
 			this.syntax['htmlFilterException'] = this.toParse;
-			// Nothing allowed after it
-			throw "not sure";
+			return;
 		}
 		
 		// selectorException #@#
 		if ( this.toParse.left(3) === "#@#" ) {
 			this.syntax['selectorException'] = this.toParse;
-			// Nothing allowed after it
-			throw "not sure";
+			return;
 		}
 		
-		let matchPos;
 		// selector ##
 		if ( this.toParse.left(2) === "##" ) {
-			// parse until :style() or :remove() encountered
-			matchPos = this.toParse.search(/:style\(|:remove\(/);
-			
-			// if no action operators
-			if ( matchPos === -1 ) {
-				this.syntax['selector'] = this.toParse;
-				throw "not sure";
-			} else {
-				this.syntax['selector'] = this.toParse.left(matchPos);
-				this.toParse = this.toParse.slice(matchPos);
-				this.syntax['actionOperator'] = this.toParse;
-			}
+			this.syntax['selector'] = this.toParse;
+			return;
 		}
 		
 		// abpExtendedSelector #?#
 		if ( this.toParse.left(3) === "#?#" ) {
-			// parse until :style() or :remove() encountered
-			matchPos = this.toParse.search(/:style\(|:remove\(/);
-			
-			// if no action operators
-			if ( matchPos === -1 ) {
-				this.syntax['abpExtendedSelector'] = this.toParse;
-				throw "not sure";
-			} else {
-				this.syntax['abpExtendedSelector'] = this.toParse.left(matchPos);
-				this.toParse = this.toParse.slice(matchPos);
-				this.syntax['actionOperator'] = this.toParse;
-			}
+			this.syntax['abpExtendedSelector'] = this.toParse;
+			return;
 		}
 	}
 	
 	lookForActionOperators() {
-		
+		let matchPos = this.toParse.search(/(:style\(|:remove\().*\)$/);
+		if ( matchPos !== -1 ) {
+			this.syntax['actionOperator'] = this.toParse.slice(matchPos);
+			this.toParse = this.toParse.left(matchPos);
+		}
 	}
 	
 	/** split commas */
