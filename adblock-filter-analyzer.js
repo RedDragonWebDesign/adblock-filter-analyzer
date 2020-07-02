@@ -458,7 +458,7 @@ class AdBlockSyntaxLine {
 			if ( this.syntax[key] ) {
 				let s = this.syntax[key];
 				s = Helper.escapeHTML(s);
-				s = s.replace(/  /g, " &nbsp;");
+				s = s.replace(/ /g, "&nbsp;");
 				richText += '<span class="' + classes + '">' + s + '</span>';
 			}
 		}
