@@ -18,11 +18,14 @@ body {
 	cursor: text;
 	overflow: scroll;
 	resize: both;
+	/* in Chrome, must have display: inline-block for contenteditable=true to prevent it from adding <div> <p> and <span> when you type. This fixes GitHub bug #23 */
+	display: inline-block;
 }
 
 /* 18 colors */
 /* ideas: https://encycolorpedia.com/websafe */
 /* next up: {background-color: navy; color: white;} */
+/* next up: {background-color: black; color: white;} */
 .uboPreParsingDirective {background-color: orange}
 .agHint {background-color: #C586AB}
 .comment {background-color: #6A9955}
