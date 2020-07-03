@@ -18,7 +18,7 @@ body {
 	cursor: text;
 	overflow: scroll;
 	resize: both;
-	/* in Chrome, must have display: inline-block for contenteditable=true to prevent it from adding <div> <p> and <span> when you type. This fixes GitHub bug #23 */
+	/* in Chrome, must have display: inline-block for contenteditable=true to prevent it from adding <div> <p> and <span> when you type. This fixes GitHub bug #23 double enter when hitting enter at end of file and #24 hitting backspace at end does not work*/
 	display: inline-block;
 }
 
