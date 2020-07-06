@@ -1,4 +1,4 @@
-export let tooltips =  {
+export let tooltips = {
 	'uboPreParsingDirective': // !#
 		`<ul>
 		<li>@syntax - !#</li>
@@ -23,7 +23,7 @@ export let tooltips =  {
 		<li>@function-library - </li>
 		<li>@tip - </li>
 		</ul>`,
-	'comment': // !
+	'comment': // ! or [
 		`<ul>
 		<li>@syntax - ! or [</li>
 		<li>@name - Comment</li>
@@ -128,6 +128,7 @@ export let tooltips =  {
 		<li>@special-characters - CSS Selectors .#*,>+~[]=|^$:()</li>
 		<li>@function-library - </li>
 		<li>@tip - Blocking an element by #id or .class are the most common. You'd type this in as example.com###id or example.com##.class</li>
+		<li>@tip2 - :has-text(text) or :has-text(/regex/) is a great way to block elements containing specific text</li>
 		</ul>`,
 	'htmlFilter': // ##^
 		`<ul>
@@ -175,7 +176,7 @@ export let tooltips =  {
 		<li>@plugin-variations - </li>
 		<li>@special-characters - CSS Properties :;,()!</li>
 		<li>@function-library - </li>
-		<li>@tip - :style(position: absolute !important;) is a great way to make floating toolbars not float anymore.</li>
+		<li>@tip - :style(position: absolute !important;) or :style(position: relative !important) is a great way to make floating toolbars not float anymore.</li>
 		</ul>`,
 	'uboScriptlet': // ##+js()
 		`<ul>
@@ -212,5 +213,5 @@ export let tooltips =  {
 		<li>@special-characters - ;</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>`
 };
