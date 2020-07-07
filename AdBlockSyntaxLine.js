@@ -146,6 +146,7 @@ export class AdBlockSyntaxLine {
 		}
 	}
 	
+	/** Takes the values in the this.syntax array and builds them into a string. Then makes sure that string matches the input string. If these don't match, this is a pretty sure sign there's a bug. */
 	_lookForMismatch() {
 		let lineString = "";
 		for ( let key in this.syntax ) {
@@ -161,6 +162,7 @@ export class AdBlockSyntaxLine {
 	_categorizeSyntax() {
 		this._lookForComments();
 		this._lookForDomains();
+		// lookForActionOperators needs to come before lookForSelectors, even though actionOperators appear after selectors in the string.
 		this._lookForActionOperators();
 		this._lookForSelectors();
 	}
@@ -347,6 +349,7 @@ export class AdBlockSyntaxLine {
 		// are multiple allowed? Not sure. uBlock validator says yes. I can't find any double examples in filter lists though
 	}
 	
+	/** Gets a string with a JSON representation of the syntax categories. Also prints isValid and errorHint. */
 	getJSON() {
 		let s = "";
 		s += "Filter = " + this.string + "\n";
@@ -360,6 +363,7 @@ export class AdBlockSyntaxLine {
 		return s;
 	}
 	
+	/** Gets a string of the filter syntax, with HTML <span>s wrapped around each category of syntax. These <span>s will be used to highlight the text the correct color in the richTextBox. */
 	getRichText() {
 		let richText = "";
 		let classes = "";
