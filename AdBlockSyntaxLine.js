@@ -212,7 +212,7 @@ export class AdBlockSyntaxLine {
 		hasNothingElse = (noRegEx.length === 0);
 		if ( hasRegEx && (hasSelector || hasNothingElse) ) {
 			regEx = this.toParse.slice(0, this.toParse.length - noRegEx.length);
-			this.syntax['domainRegEx'] = regEx;
+			this.syntax['exceptionRegEx'] = regEx;
 			this.toParse = noRegEx;
 			return;
 		}
