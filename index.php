@@ -6,7 +6,7 @@
 	<title>AdBlock Filter Analyzer</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="style.css">
-	<script src="adblock-filter-analyzer.js"></script>
+	<script type="module" src="adblock-filter-analyzer.js"></script>
 </head>
 
 <body>
