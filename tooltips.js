@@ -1,4 +1,4 @@
-export let tooltips = {
+let tooltips = {
 	'uboPreParsingDirective': // !#
 		`<ul>
 		<li>@syntax - !#</li>

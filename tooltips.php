@@ -6,6 +6,7 @@
 	<title>AdBlock Filter Categories</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="style.css">
+	<script src="tooltips.js"></script>
 </head>
 
 <body>
@@ -17,7 +18,6 @@
 	</div>
 	
 	<script type="module">
-		import { tooltips } from './tooltips.js';
 		let viewer = document.getElementById('viewer');
 		
 		for ( let key in tooltips ) {
