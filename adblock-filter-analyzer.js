@@ -6,28 +6,6 @@
 import { AdBlockSyntaxBlock }  from './AdBlockSyntaxBlock.js';
 import { Cursor }  from './Cursor.js';
 
-// TODO: figure out how to move this into its own file and import/export it. Currently, adding "export" to the beginning of it generates an error.
-Object.assign(String.prototype, {
-	/** @description "Testing 123".left(4) = "Test" */
-	left(length) {
-		return this.slice(0, length);
-	},
-	
-	/** @description "Testing 123".right(3) = "123" */
-	right(length) {
-		return this.substr(this.length - length);
-	},
-	
-	/** take a string, and chop off the amount of text on the right specified, leaving the text on the left */
-	chopRight(length) {
-		return this.slice(0, this.length - length);
-	},
-	
-	chopMiddle(start, length) {
-		return this.substr(0, start) + this.substr(length + 1);
-	}
-});
-
 // This line not optional. Content loads top to bottom. Need to wait until DOM is fully loaded.
 window.addEventListener('DOMContentLoaded', (e) => {
 	let json = document.getElementById('json');

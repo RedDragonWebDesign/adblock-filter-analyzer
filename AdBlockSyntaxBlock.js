@@ -64,7 +64,7 @@ export class AdBlockSyntaxBlock {
 			// NOTE: even though contenteditable="true" uses <div></div> for enter, we must convert it to <br>, because a blank innerHTML <div></div> does not render as enter
 			this.richText += "<br>";
 		}
-		this.richText = this.richText.chopRight(4);
+		this.richText = this.richText.slice(0, this.richText.length - 4);
 		
 		this.json = this.countTrue + " valid, "
 			+ this.countNotSure + " unsure, "

@@ -84,9 +84,9 @@ export class AdBlockSyntaxLine {
 		}
 		
 		// Delete regex. Regex is allowed to contain our special chars. When we do our searches, we don't want to get false positives.
-		let s = this.string;
-		s = s.replace(/^\/.*?[^\\]\//g, '');
-		s = s.replace(/^@@\/.*?[^\\]\//g, '@@');
+		let s = this.string
+			.replace(/^\/.*?[^\\]\//g, '')
+			.replace(/^@@\/.*?[^\\]\//g, '@@');
 		
 		// look for double selectors $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$#
 		// had to take out $, too many false positives, it's used in CSS and +js()
@@ -138,9 +138,12 @@ export class AdBlockSyntaxLine {
 		}
 		
 		// ##+js() #@#+js() :style() :remove() must end in )
-		let lastChar = s.right(1);
-		let shouldEndInParenthesis = ( this.syntax['uboScriptlet'] ||  this.syntax['uboScriptletException'] ||  this.syntax['actionOperator'] );
-		if ( shouldEndInParenthesis && lastChar !== ')' ) {
+		let needsEndParenthesis = (
+			this.syntax['uboScriptlet'] ||
+			this.syntax['uboScriptletException'] ||
+			this.syntax['actionOperator']
+		);
+		if ( needsEndParenthesis && ! s.endsWith(')') ) {
 			this.errorHint = "##+js() #@#+js() :style() :remove() must end in )"
 			throw false;
 		}
@@ -169,67 +172,67 @@ export class AdBlockSyntaxLine {
 		
 	_lookForComments() {	
 		// uboPreParsingDirective !#
-		if ( this.toParse.left(2) === "!#" ) {
+		if ( this.toParse.startsWith('!#') ) {
 			this.syntax['uboPreParsingDirective'] = this.string;
 			throw "not sure";
 		}
 		
 		// agHint !+
-		if ( this.toParse.left(2) === "!+" ) {
+		if ( this.toParse.startsWith('!+') ) {
 			this.syntax['agHint'] = this.string;
 			throw "not sure";
 		}
 		
 		// comment ! [
-		if ( this.string.left(1) === '!' || this.string.left(1) === '[' ) {
+		if ( this.string.startsWith('!') || this.string.startsWith('[') ) {
 			this.syntax['comment'] = this.string;
 			throw true;
 		}
 	}
 	
 	_lookForDomains() {
+		let regEx = "";
+		
 		// domainRegEx /regex/
-		let matchPos = this.toParse.search(/^\/.*?[^\\]\//);
-		let regExLookingStringFound = (matchPos !== -1);
-		let toParse = this.toParse.replace(/^\/.*?[^\\]\//, '');
-		let regEx = this.toParse.left(this.toParse.length - toParse.length);
-		let selectorAfterRegEx = (toParse.search(/^(\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#)/) !== -1);
-		let nothingAfterRegEx = (toParse.length === 0);
-		if ( regExLookingStringFound && (selectorAfterRegEx || nothingAfterRegEx) ) {
+		let hasRegEx = (this.toParse.search(/^\/.*?[^\\]\//) !== -1);
+		let noRegEx = this.toParse.replace(/^\/.*?[^\\]\//, '');
+		let hasSelector = (noRegEx.search(/^(\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#)/) !== -1);
+		let hasNothingElse = (noRegEx.length === 0);
+		if ( hasRegEx && (hasSelector || hasNothingElse) ) {
+			regEx = this.toParse.slice(0, this.toParse.length - noRegEx.length);
 			this.syntax['domainRegEx'] = regEx;
-			this.toParse = toParse;
+			this.toParse = noRegEx;
 			return;
 		}
 		
 		// exceptionRegEx @@/regex/
-		matchPos = this.toParse.search(/^@@\/.*?[^\\]\//);
-		regExLookingStringFound = (matchPos !== -1);
-		toParse = this.toParse.replace(/^@@\/.*?[^\\]\//, '');
-		regEx = this.toParse.left(this.toParse.length - toParse.length);
-		selectorAfterRegEx = (toParse.search(/^(\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#)/) !== -1);
-		nothingAfterRegEx = (toParse.length === 0);
-		if ( regExLookingStringFound && (selectorAfterRegEx || nothingAfterRegEx) ) {
+		hasRegEx = (this.toParse.search(/^@@\/.*?[^\\]\//) !== -1);
+		noRegEx = this.toParse.replace(/^@@\/.*?[^\\]\//, '');
+		hasSelector = (noRegEx.search(/^(\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#)/) !== -1);
+		hasNothingElse = (noRegEx.length === 0);
+		if ( hasRegEx && (hasSelector || hasNothingElse) ) {
+			regEx = this.toParse.slice(0, this.toParse.length - noRegEx.length);
 			this.syntax['domainRegEx'] = regEx;
-			this.toParse = toParse;
+			this.toParse = noRegEx;
 			return;
 		}
 		
 		// exception @@
 		let domainException = false;
-		if ( this.string.left(2) === '@@' ) {
+		if ( this.string.startsWith('@@') ) {
 			domainException = true;
 		}
 		
 		// domain
 		// parse until $ #@# ## #?# #$#
 		// str.search returns first position, when searching from left to right (good)
-		matchPos = this.toParse.search(/#@#|##|#\?#|#\$#|\$/);
+		let matchPos = this.toParse.search(/#@#|##|#\?#|#\$#|\$/);
 		// if no categories after the domain
 		if ( matchPos === -1 ) {
 			this.syntax['domain'] = this.toParse;
 			this.toParse = '';
 		} else {
-			this.syntax['domain'] = this.toParse.left(matchPos);
+			this.syntax['domain'] = this.toParse.slice(0, matchPos);
 			this.toParse = this.toParse.slice(matchPos);
 		}
 		
@@ -248,7 +251,7 @@ export class AdBlockSyntaxLine {
 	
 	_lookForSelectors() {
 		// option $ (example: image)
-		if ( this.toParse.left(1) === '$' ) {
+		if ( this.toParse.startsWith('$') ) {
 			this.syntax['option'] = this.toParse;
 			// OK to have nothing before it
 			// Nothing allowed after it
@@ -256,21 +259,21 @@ export class AdBlockSyntaxLine {
 		}
 		
 		// abpSnippet #$# (example: log hello world!)
-		if ( this.toParse.left(3) === "#$#" ) {
+		if ( this.toParse.startsWith('#$#') ) {
 			this.syntax['abpSnippet'] = this.toParse;
 			// Nothing allowed after it
 			throw "not sure";
 		}
 		
 		// uboScriptletException #@#+js(
-		if ( this.toParse.left(7) === "#@#+js(" ) {
+		if ( this.toParse.startsWith('#@#+js(') ) {
 			this.syntax['uboScriptletException'] = this.toParse;
 			// Nothing allowed after it
 			throw "not sure";
 		}
 		
 		// uboScriptlet ##+js(
-		if ( this.toParse.left(6) === "##+js(" ) {
+		if ( this.toParse.startsWith('##+js(') ) {
 			this.syntax['uboScriptlet'] = this.toParse;
 			
 			// per ublock documentation, example.com##+js() when js() is empty is an error
@@ -284,31 +287,31 @@ export class AdBlockSyntaxLine {
 		}
 		
 		// htmlFilter ##^
-		if ( this.toParse.left(3) === "##^" ) {
+		if ( this.toParse.startsWith('##^') ) {
 			this.syntax['htmlFilter'] = this.toParse;
 			return;
 		}
 		
 		// htmlFilterException #@#^
-		if ( this.toParse.left(4) === "#@#^" ) {
+		if ( this.toParse.startsWith('#@#^') ) {
 			this.syntax['htmlFilterException'] = this.toParse;
 			return;
 		}
 		
 		// selectorException #@#
-		if ( this.toParse.left(3) === "#@#" ) {
+		if ( this.toParse.startsWith('#@#') ) {
 			this.syntax['selectorException'] = this.toParse;
 			return;
 		}
 		
 		// selector ##
-		if ( this.toParse.left(2) === "##" ) {
+		if ( this.toParse.startsWith('##') ) {
 			this.syntax['selector'] = this.toParse;
 			return;
 		}
 		
 		// abpExtendedSelector #?#
-		if ( this.toParse.left(3) === "#?#" ) {
+		if ( this.toParse.startsWith('#?#') ) {
 			this.syntax['abpExtendedSelector'] = this.toParse;
 			return;
 		}
@@ -318,7 +321,7 @@ export class AdBlockSyntaxLine {
 		let matchPos = this.toParse.search(/(:style\(|:remove\().*\)$/);
 		if ( matchPos !== -1 ) {
 			this.syntax['actionOperator'] = this.toParse.slice(matchPos);
-			this.toParse = this.toParse.left(matchPos);
+			this.toParse = this.toParse.slice(0, matchPos);
 		}
 	}
 	
