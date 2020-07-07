@@ -1,27 +1,6 @@
 ! one bad filter, for testing purposes
 bad filter
 
-! comments
-!comment with no space at beginning. shows up red in VS Code highlighting. passes ubo validator.
-! ubo validator shows the below as comments
-[test]
-[ test
-[Nano Adblocker]
-
-! uboPreParsingDirective !#
-!#include ublock-filters.txt
-!#include ublock/filters.txt
-!#if env_firefox
-!#if !env_chromium
-!#if env_mobile
-!#endif
-
-! agHint !+
-!+ NOT_OPTIMIZED
-!+ NOT_OPTIMIZED PLATFORM(android)
-!+ PLATFORM(windows,mac,android)
-!+ NOT_PLATFORM(ext_safari, ext_android_cb, ios)
-
 ! CSS Selectors ##
 telemundo.com##.__hub--ad, .ad--MAIN, .ad--MULTI, .ad-container, .banner-sticky-bg
 theblaze.com##[id^="sWidget_-_Worth_a_look"]
@@ -34,12 +13,9 @@ www.reuters.com##div[class="slide-image-enclosure "] > img[src*="s3.reutersmedia
 ago.vermont.gov##.navhead.rad div[style="display: block; width: 1200px; height: 29px; float: left;"]
 golfdigest.com##.component-sticky.site-header div[style*="overflow: hidden; height:"]
 www.yahoo.com##[class*="fixed-space"][class*="modal-open"]
-
-! #$# - snippets
-audiofanzine.com#$#abort-on-property-read TextDecoder; abort-on-property-read require; abort-current-inline-script _audiofanzineProductStack
-vidlox.me#$#abort-current-inline-script Math zfgloaded
-oral-amateure.com#$#hide-if-contains-image-hash 00ff992d2c3efe08,38f8e0733b0d1f07,bf049c9cbc8c0f1e,e8caeae0e8f0f0f0
-zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read BetterJsPop; abort-on-property-read exoDocumentProtocol; abort-on-property-read ExLdr.serve; abort-on-property-read ExoLoader; abort-on-property-read ExoLoader.addZone; abort-on-property-read ExoLoader.serve; abort-on-property-read getexoloader; abort-current-inline-script document.dispatchEvent myEl; abort-on-property-read aNB
+test.com##p:last-of-type
+! TODO: add a test for every selector
+! https://www.w3schools.com/cssref/css_selectors.asp
 
 ! exception @@
 @@||100percentfedup.com^$generichide
@@ -71,13 +47,43 @@ purewow.com##.fb_digioh-lock:style(overflow-x: hidden !important; overflow-y: sc
 scribd.com##body.modal_open:style(overflow-x: hidden !important; overflow-y: scroll !important; padding-right: 0 !important;)
 hostinger.com##path[fill-rule="evenodd"]:style(fill: #ffffff !important;)
 
-! cosmetic filters :has(...), :has-text(...), :if(...), :if-not(...), etc.
+! cosmetic filters
+! https://github.com/gorhill/uBlock/wiki/Procedural-cosmetic-filters
+! :has()
+strikeout.me##body > div:has(img[alt="AdBlock Alert"])
+mobile.twitter.com##main [role="region"] > [role="grid"] > [role="rowgroup"] [role="row"]:has(div:last-of-type span:has-text(/^Promoted by/))
+! :has() with :scope option
+yandex.ru##.serp-item:has(:scope .organic > .organic__subtitle > .label_color_yellow)
+! :has-text()
 udenvirus.dk##.nfc-bottom-right:has-text(Reimage)
 howtoremove.guide##.entry-content > div:has-text(Special Offer)
-rmdown.com##[style]:not(SPAN)
+! :has-text() with regex
 6stream.xyz##body > div[style*="position: fixed;"]:has-text(/Thank you for visiting/)
+example.com##body > div:last-of-type span:has-text(/^Promoted by/i)
+! :matches-css()
+extratorrent.*##body > div[class]:matches-css(position: absolute)
+! :matches-css() with regex
+facet.wp.pl##div[class^="_"]:matches-css(background-image: /^url\("data:image/png;base64,/
+! :matches-css-before()
+extratorrent.*##body > div[class]:matches-css-before(position: absolute)
+! :matches-css-after()
+extratorrent.*##body > div[class]:matches-css-after(position: absolute)
+! :min-text-length()
+quoka.de##^script:min-text-length(35000)
+! :not()
+rmdown.com##[style]:not(SPAN)
 si.com##.short-only.logo > .desktop-only.full-logo > .color-porcelain.hover-fill, .showBackground.stickyFooter, .ui-button.ui-button-close.small.is-fixed, body:not(.under-social) nav.main .under-social-logo.desktop-only, hr
-strikeout.me##body > div:has(img[alt="AdBlock Alert"])
+test.com###test:not(:has(.foo))
+! :upward()
+fastbay.org##.detLink:has-text(VPN):upward(3)
+gorhill.github.io###pcf #a19 b:upward(2)
+gorhill.github.io###pcf #a20 b:upward(.fail)
+! :watch-attr()
+www.vivrehome.pl##.js-popup-register:not([style]):watch-attr(style):has(.js-title-default.is-hidden:watch-attr(class))
+ameshkov.github.io###testdiv:watch-attr(id):has(p)
+! :xpath()
+fastbay.org##.detLink:has-text(VPN):xpath(../../..)
+facebook.com##:xpath(//div[@id="stream_pagelet"]//div[starts-with(@id,"hyperfeed_story_id_")][.//h6//span/text()="People You May Know"])
 
 ! #?# - extended CSS
 ! deprecated synonyms for :has()
@@ -87,6 +93,7 @@ strikeout.me##body > div:if(img[alt="AdBlock Alert"])
 
 ! HTML filters ##^
 newsbreak24.de##^script:has-text(===):has-text(/[\w\W]{14000}/)
+quoka.de##^script:has-text(/[\w\W]{35000}/)
 
 ! HTML filter exclusions #@#^
 newsbreak24.de#@#^script:has-text(===):has-text(/[\w\W]{14000}/)
@@ -140,13 +147,44 @@ trk*.vidible.tv
 ! options $ and option stuff ~ = | ,
 .snowplowanalytics.$domain=~snowplowanalytics.com
 $third-party,xmlhttprequest,domain=alltube.pl|alltube.tv
-! the following 3 are short aliases of other commands
+||fastly.net/js/prebid$script,redirect=noopjs
+! the following are short aliases of other commands
 $ghide
 $shide
 $ehide
+$1p
+$3p
 
 ! dollar signs not being used to indicate $options
 mac-torrent-download.net##+js(acis, $, AdBlock)
 watchmygf.me##+js(set, $.magnificPopup.open, noopFunc)
 run.az#?#div[class$="bolmem"]
 udenvirus.dk##th:has-text(/^Detection$/)
+
+! #$# - snippets
+audiofanzine.com#$#abort-on-property-read TextDecoder; abort-on-property-read require; abort-current-inline-script _audiofanzineProductStack
+vidlox.me#$#abort-current-inline-script Math zfgloaded
+oral-amateure.com#$#hide-if-contains-image-hash 00ff992d2c3efe08,38f8e0733b0d1f07,bf049c9cbc8c0f1e,e8caeae0e8f0f0f0
+zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read BetterJsPop; abort-on-property-read exoDocumentProtocol; abort-on-property-read ExLdr.serve; abort-on-property-read ExoLoader; abort-on-property-read ExoLoader.addZone; abort-on-property-read ExoLoader.serve; abort-on-property-read getexoloader; abort-current-inline-script document.dispatchEvent myEl; abort-on-property-read aNB
+
+! comments
+!comment with no space at beginning. shows up red in VS Code highlighting. passes ubo validator.
+! ubo validator shows the below as comments
+[test]
+[ test
+[Nano Adblocker]
+[Adblock Plus 2.0]
+
+! uboPreParsingDirective !#
+!#include ublock-filters.txt
+!#include ublock/filters.txt
+!#if env_firefox
+!#if !env_chromium
+!#if env_mobile
+!#endif
+
+! agHint !+
+!+ NOT_OPTIMIZED
+!+ NOT_OPTIMIZED PLATFORM(android)
+!+ PLATFORM(windows,mac,android)
+!+ NOT_PLATFORM(ext_safari, ext_android_cb, ios)

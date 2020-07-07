@@ -30,9 +30,15 @@ test.com$websocket:remove(position: absolute !important;)
 ! action operators must have domain
 ##.test:style(position: absolute !important;)
 
+! ##+js() #@#+js() :style() :remove() must end in )
+test.com##.class:style(position: absolute !important;)garbage
+test.com##.class:remove(position: absolute !important;)garbage
+upload4earn.org##+js(ra, checked)garbage
+zheltaya.ru#@#+js(aopr, document.getElementById)garbage
+
 ! no commas allowed in regex filters
 /test/,/test2/##hello
-@@/test/,/test2/##hello
+@@/test/,/test2/
 
 ! not in list of valid uboPreParsingDirectives !#
 ! TODO: spacing rules?
@@ -97,8 +103,14 @@ www.example.com/中文/北京[city]
 ~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>? `1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./
 ~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./
 
-! ##+js() #@#+js() :style() :remove() must end in )
-test.com##.class:style(position: absolute !important;)garbage
-test.com##.class:remove(position: absolute !important;)garbage
-upload4earn.org##+js(ra, checked)garbage
-zheltaya.ru#@#+js(aopr, document.getElementById)garbage
+! deprecated cosmetic filters
+! https://github.com/gorhill/uBlock/wiki/Procedural-cosmetic-filters
+###test:if(test2)
+###test:if-not(test2)
+###test:nth-ancesor(2)
+fastbay.org##.detLink:has-text(VPN):nth-ancestor(3)
+###test:watch-attrs(.test2)
+
+! @@ may not contain selectors or action operators
+@@test.com###test
+@@test.com###test:style(position: absolute !important;)
