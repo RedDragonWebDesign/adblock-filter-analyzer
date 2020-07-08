@@ -37,8 +37,6 @@ export class AdBlockSyntaxLine {
 		
 		try {
 			this._categorizeSyntax();
-			this._splitCommas();
-			this._validateEachCategory();
 			// TODO: this.genericOrSpecific(); // https://help.eyeo.com/en/adblockplus/how-to-write-filters#generic-specific
 		} catch(e) {
 			// only catch what we want, let actual errors throw to console
@@ -61,6 +59,22 @@ export class AdBlockSyntaxLine {
 				}
 			}
 		}
+		
+		this._splitCommas();
+		
+		if ( this.isValid !== true ) {
+			try {
+				this._validateEachCategory();
+			} catch(e) {
+				// only catch what we want, let actual errors throw to console
+				if ( e === true || e === false || e === "not sure" ) {
+					this.isValid = e;
+				} else {
+					throw e;
+				}
+			}
+		}
+		
 		this._lookForMismatch();
 	}
 	
@@ -339,6 +353,28 @@ export class AdBlockSyntaxLine {
 	
 	/** now, do validation on each individual category */
 	_validateEachCategory() {
+		let noSlashes;
+		
+		if ( this.syntax['domainRegEx'] ) {
+			noSlashes = this.syntax['domainRegEx'].slice(1).slice(0, length - 1);
+			try {
+				let regEx = new RegExp(noSlashes);
+			} catch {
+				this.errorHint = "invalid RegEx";
+				throw false;
+			}
+		}
+		
+		if ( this.syntax['exceptionRegEx'] ) {
+			noSlashes = this.syntax['exceptionRegEx'].slice(3).slice(0, length - 1);
+			try {
+				let regEx = new RegExp(noSlashes);
+			} catch {
+				this.errorHint = "invalid RegEx";
+				throw false;
+			}
+		}
+		
 		// note: selector syntax is definitely case sensitive. URL's might be too
 		
 		// domain regex probably has to be all or nothing. can't mix in te/s/t because / can also be part of the URL
