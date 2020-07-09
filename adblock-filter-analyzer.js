@@ -15,7 +15,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	
 	// load filter test into textarea, to be our default text
 	let xmlhttp = new XMLHttpRequest();
-	xmlhttp.open('GET', 'test-good-filters.txt', false);
+	xmlhttp.open('GET', 'tests/test-good-filters.txt', false);
 	xmlhttp.send();
 	let text = xmlhttp.responseText;
 	richText.innerHTML = text;
