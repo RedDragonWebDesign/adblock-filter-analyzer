@@ -5,6 +5,7 @@
 
 import { Helper } from './Helper.js';
 import { optionsWithoutEquals, optionsWithEquals } from './FunctionLists/options.js';
+import { uboScriptlets } from './FunctionLists/uboScriptlets.js';
 
 export class AdBlockSyntaxLine {
 	string = "";
@@ -352,69 +353,85 @@ export class AdBlockSyntaxLine {
 		// actionoperator - split by SEMICOLONS
 	}
 	
+	_validateRegEx(trimmed) {
+		try {
+			let regEx = new RegExp(trimmed);
+		} catch {
+			this.errorHint = "invalid RegEx";
+			throw false;
+		}
+	}
+	
+	_validateOption(trimmed) {
+		let optionsArray = trimmed.split(',');
+		for ( let value of optionsArray ) {
+			// if there's a ~ at the beginning, strip it out
+			if ( value.search(/^~/) !== -1 ) {
+				value = value.slice(1);
+			}
+			
+			// check if our string contains =
+			let hasEquals = /^(.*)=.*$/.exec(value);
+			
+			if ( hasEquals ) {
+				// isolate the keyword to the left of equals
+				value = hasEquals[1];
+				
+				// check optionsWithEquals list
+				if ( ! optionsWithEquals.includes(value) ) {
+					this.errorHint = 'Option "' + value + '" is not in the list of allowed optionsWithEquals. Hint: Options are case sensitive and should have no spaces.';
+					throw false;
+				}
+			} else {
+				// check optionsWithoutEquals list
+				if ( ! optionsWithoutEquals.includes(value) ) {
+					this.errorHint = 'option "' + value + '" is not in the list of allowed optionsWithoutEquals. Hint: Options are case sensitive and should have no spaces.';
+					throw false;
+				}
+			}
+			
+			// TODO: RegEx checks on these...
+				// 'csp', // = [a-z\-:' ]
+				// 'denyallow', // = [a-z.|]
+				// 'domain', // = [~|a-z.]
+				// 'redirect', // = [a-z0-9\-.]
+				// 'rewrite', // = [a-z\-:]
+				// 'sitekey', // = [a-z]
+		}
+	}
+	
 	/** validate the syntax within each category */
 	_validateEachCategory() {
 		let trimmed;
 		
+		// domainRegEx /regex/
 		if ( this.syntax['domainRegEx'] ) {
 			trimmed = this.syntax['domainRegEx'].slice(1).slice(0, length - 1);
-			try {
-				let regEx = new RegExp(trimmed);
-			} catch {
-				this.errorHint = "invalid RegEx";
-				throw false;
-			}
+			this._validateRegEx(trimmed);
 		}
 		
+		// exceptionRegEx @@/regex/
 		if ( this.syntax['exceptionRegEx'] ) {
 			trimmed = this.syntax['exceptionRegEx'].slice(3).slice(0, length - 1);
-			try {
-				let regEx = new RegExp(trimmed);
-			} catch {
-				this.errorHint = "invalid RegEx";
-				throw false;
-			}
+			this._validateRegEx(trimmed);
 		}
 		
 		// option $
 		if ( this.syntax['option'] ) {
 			trimmed = this.syntax['option'].slice(1);
-			let optionsArray = trimmed.split(',');
-			for ( let value of optionsArray ) {
-				// if there's a ~ at the beginning, strip it out
-				if ( value.search(/^~/) !== -1 ) {
-					value = value.slice(1);
-				}
-				
-				// check if our string contains =
-				let hasEquals = /^(.*)=.*$/.exec(value);
-				
-				if ( hasEquals ) {
-					// isolate the keyword to the left of equals
-					value = hasEquals[1];
-					
-					// check optionsWithEquals list
-					if ( ! optionsWithEquals.includes(value) ) {
-						this.errorHint = 'Option "' + value + '" is not in the list of allowed optionsWithEquals. Hint: Options are case sensitive and should have no spaces.';
-						throw false;
-					}
-				} else {
-					// check optionsWithoutEquals list
-					if ( ! optionsWithoutEquals.includes(value) ) {
-						this.errorHint = 'option "' + value + '" is not in the list of allowed optionsWithoutEquals. Hint: Options are case sensitive and should have no spaces.';
-						throw false;
-					}
-				}
-				
-				// TODO: RegEx checks on these...
-					// 'csp', // = [a-z\-:' ]
-					// 'denyallow', // = [a-z.|]
-					// 'domain', // = [~|a-z.]
-					// 'redirect', // = [a-z0-9\-.]
-					// 'rewrite', // = [a-z\-:]
-					// 'sitekey', // = [a-z]
-			}
-				
+			this._validateOption(trimmed);
+		}
+		
+		// uboScriptlet ##+js()
+		if ( this.syntax['uboScriptlet'] ) {
+			trimmed = this.syntax['uboScriptlet'].slice(6).slice(0, length - 1);
+			this._validateUBOScriptlet(trimmed);
+		}
+		
+		// uboScriptletException #@#+js()
+		if ( this.syntax['uboScriptletException'] ) {
+			trimmed = this.syntax['uboScriptletException'].slice(7).slice(0, length - 1);
+			this._validateUBOScriptlet(trimmed);
 		}
 		
 		// uboPreParsingDirective !#
@@ -426,10 +443,33 @@ export class AdBlockSyntaxLine {
 		// htmlFilter ##^
 		// htmlFilterException #@#^
 		// abpExtendedSelector #?#
-		// uboScriptlet ##+js()
-		// uboScriptletException #@#+js()
 		// abpSnippet #$#
 		// actionOperator :style() :remove()		
+	}
+	
+	_validateUBOScriptlet(trimmed) {
+		// empty ##+js() is allowed
+		if ( ! trimmed ) return;
+		
+		// delete everything except function name
+		let strPos = trimmed.search(",");
+		if ( strPos !== -1 ) {
+			trimmed = trimmed.slice(0, strPos);
+		}
+		
+		// if present, delete .js from end of function name
+		strPos = trimmed.search(/\.js$/);
+		if ( strPos !== -1 ) {
+			trimmed = trimmed.slice(0, strPos);
+		}
+		
+		if ( ! uboScriptlets.includes(trimmed) ) {
+			// I assume the scriptlet names are case sensitive, but I am not sure.
+			// ubo validator does not validate function names. Need to do thorough testing.
+			this.errorHint = 'uboScriptlet "' + trimmed + '" is not in the list of allowed uboScriptlets';
+			console.log(this.string + " || Invalid js() || " + trimmed);
+			throw false;
+		}
 	}
 	
 	/** Gets a string with a JSON representation of the syntax categories. Also prints isValid and errorHint. */
