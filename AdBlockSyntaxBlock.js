@@ -15,6 +15,7 @@ export class AdBlockSyntaxBlock {
 	countNotSure = 0;
 	countComments = 0;
 	countMismatches = 0;
+	lineCount = 0;
 	
 	parseString(s) {
 		this._parse(s);
@@ -49,9 +50,14 @@ export class AdBlockSyntaxBlock {
 		return this.json;
 	}
 	
+	getLineCount() {
+		return this.lineCount;
+	}
+	
 	_parse(s) {
 		this.string = s;
 		let lines = s.split("\n");
+		this.lineCount = lines.length;
 		let counter = 0;
 		for ( let lineString of lines) {
 			if ( lineString !== '' ) {
