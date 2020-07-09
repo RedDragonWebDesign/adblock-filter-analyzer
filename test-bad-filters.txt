@@ -127,3 +127,9 @@ fastbay.org##.detLink:has-text(VPN):nth-ancestor(3)
 ! @@ may not contain selectors or action operators
 @@test.com###test
 @@test.com###test:style(position: absolute !important;)
+@@test.com#$?#test{position: absolute !important}
+
+! agCSSInjectionCSS can only be paired with aGCSSInjectionBase
+notebook-center.ru##.leftCol { remove: true; }
+notebook-center.ru##^.leftCol { remove: true; }
+notebook-center.ru$1p{ remove: true; }

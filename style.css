@@ -25,21 +25,40 @@ body {
 /* 18 colors */
 /* ideas: https://encycolorpedia.com/websafe */
 /* next up: {background-color: black; color: white;} */
+/* {background-color: #569CD6; color: white;} */
+
 .uboPreParsingDirective {background-color: orange}
 .agHint {background-color: #C586AB}
+
 .comment {background-color: #6A9955}
+
 .exception {background-color: #D4D4D4}
+
 .exceptionRegEx {background-color: yellow}
+
 .domainRegEx {background-color: navy; color: white;}
+
 .domain {background-color: #CE9178}
+
 .option {background-color: lightblue}
+
 .selectorException {background-color: limegreen}
+.htmlFilterException {background-color: maroon; color: white;}
+
 .selector {background-color: #DCDCAA}
 .htmlFilter {background-color: orange}
-.htmlFilterException {background-color: maroon; color: white;}
+
 .abpExtendedSelector {background-color: rgba(112, 55, 16, 0.808); color: white;}
+.agCSSInjectionSelector {background-color: rgba(112, 55, 16, 0.808); color: white;}
+
 .actionOperator {background-color: gold}
+.agCSSInjectionCSS {background-color: gold}
+
 .uboScriptlet {background-color: pink}
+.abpSnippet {background-color: pink}
+.agJSRule {background-color: pink}
+
 .uboScriptletException {background-color: aqua}
-.abpSnippet {background-color: #569CD6; color: white;}
+.agJSException {background-color: aqua}
+
 .error {background-color: red !important; color: black;}

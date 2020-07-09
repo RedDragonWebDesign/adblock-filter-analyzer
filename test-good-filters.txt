@@ -261,7 +261,7 @@ tab.example.com##+js(set, adBlock, false)
 !+ PLATFORM(windows,mac,android)
 !+ NOT_PLATFORM(ext_safari, ext_android_cb, ios)
 
-! agCSSInjection #$?#
+! agCSSInjectionSelector & agCSSInjectionCSS #$?#
 notebook-center.ru#$?#.leftCol > div[style^="height:"]:has(> div.head > h3:contains(/Поделиться|Нравится/)) { remove: true; }
 onlinemschool.com#$?#.share_buttons:has(> a) { position: absolute!important; left: -3000px!important; }
 buzzhand.com#$?#.mash-lightbox[-ext-has="div"] { display: none!important; }
@@ -272,9 +272,9 @@ dropgalaxy.com#$?#input[id^="adblock_"] { remove: true; }
 wstream.video#$?#body > div[id][style]:has(> div[style] > .jwplayer) { display: block!important; }
 wstream.video#$?##container div[id][style*="display:"]:not([style*="table-cell"]):has(.jwplayer) { display: block!important; }
 
-! agJSRule
+! agJSRule #%#
 example.org#%#window.__gaq = undefined;
 
-! agJSException
+! agJSException #@%#
 example.com#@%#window.__gaq = undefined;
 spiegel.de#@%#!function(){function b(){}function a(a){return{get:function(){return a},set:b}}function c(a){a(!1)}AG_defineProperty('_sp_.config.content_control_callback',a(b)),AG_defineProperty('_sp_.config.spid_control_callback',a(b)),AG_defineProperty('_sp_.config.vid_control_callback',a(b)),AG_defineProperty('_sp_.config.disableBlockerStyleSheets',a(!1)),AG_defineProperty('_sp_.checkState',a(c)),AG_defineProperty('_sp_.isAdBlocking',a(c)),AG_defineProperty('_sp_.isAdblocking',a(c)),AG_defineProperty('_sp_.isContentBlockerPresent',a(c)),AG_defineProperty('_sp_.getSafeUri',a(function(a){return a})),AG_defineProperty('_sp_.pageChange',a(b)),AG_defineProperty('_sp_.setupSmartBeacons',a(b)),AG_defineProperty('_sp_.msg.startMsg',a(b)),document.addEventListener('sp.blocking',function(a){a.stopImmediatePropagation(),a=document.createEvent('Event'),a.initEvent('sp.not_blocking',!0,!1),this.dispatchEvent(a)})}();
