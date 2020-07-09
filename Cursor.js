@@ -69,11 +69,11 @@ export class Cursor {
 					chars.count = 0;
 				}
 			} else {
-				for (var lp = 0; lp < node.childNodes.length; lp++) {
-					range = Cursor._createRange(node.childNodes[lp], chars, range);
+				for (var i = 0; i < node.childNodes.length; i++) {
+					range = Cursor._createRange(node.childNodes[i], chars, range);
 
 					if (chars.count === 0) {
-					break;
+						break;
 					}
 				}
 			}
