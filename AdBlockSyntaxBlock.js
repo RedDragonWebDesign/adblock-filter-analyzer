@@ -52,10 +52,15 @@ export class AdBlockSyntaxBlock {
 	_parse(s) {
 		this.string = s;
 		let lines = s.split("\n");
+		let counter = 0;
 		for ( let lineString of lines) {
+			counter++;
 			if ( lineString !== '' ) {
 				let line = new AdBlockSyntaxLine(lineString);
-				this.json += line.getJSON() + "\n\n";
+				// A large amount of JSON slows down the program. Only do JSON for first few lines.
+				if ( counter < 25 ) {
+					this.json += line.getJSON() + "\n\n";
+				}
 				this.richText += line.getRichText();
 			
 				// increment the true/false counters
@@ -71,6 +76,8 @@ export class AdBlockSyntaxBlock {
 			+ this.countFalse + " invalid, "
 			+ this.countComments + " comments, "
 			+ this.countMismatches + " mismatches"
+			+ "\n"
+			+ "For speed reasons, only the first few lines will be shown."
 			+ "\n\n"
 			+ this.json;
 	}

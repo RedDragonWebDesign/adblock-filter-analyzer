@@ -27,7 +27,7 @@
 	</p>
 	
 	<p id="json-container">
-	Tree:<br />
+	Analysis:<br />
 	<textarea id="json" disabled></textarea>
 	</p>
 	
