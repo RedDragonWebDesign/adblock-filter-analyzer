@@ -386,24 +386,24 @@ export class AdBlockSyntaxLine {
 					value = value.slice(1);
 				}
 				
-				// if option is in our list of options, it's valid
-				if ( optionsWithoutEquals.includes(value) ) {
-					continue;
-				}
+				// check if our string contains =
+				let hasEquals = /^(.*)=.*$/.exec(value);
 				
-				// check if our string contains =, if so isolate the left side
-				let match = /^([a-z0-9\-~]+)=.+$/.exec(value);
-				
-				// does not contain equals, not in our library of options
-				if ( ! match ) {
-					this.errorHint = 'option "' + value + '" is not in the library of valid options';
-					throw false;
-				}
-				
-				// contains equals, not in our library of options
-				if ( ! optionsWithEquals.includes(match[1]) ) {
-					this.errorHint = 'option "' + match[1] + '" is not in the library of valid options';
-					throw false;
+				if ( hasEquals ) {
+					// isolate the keyword to the left of equals
+					value = hasEquals[1];
+					
+					// check optionsWithEquals list
+					if ( ! optionsWithEquals.includes(value) ) {
+						this.errorHint = 'Option "' + value + '" is not in the list of allowed optionsWithEquals. Hint: Options are case sensitive and should have no spaces.';
+						throw false;
+					}
+				} else {
+					// check optionsWithoutEquals list
+					if ( ! optionsWithoutEquals.includes(value) ) {
+						this.errorHint = 'option "' + value + '" is not in the list of allowed optionsWithoutEquals. Hint: Options are case sensitive and should have no spaces.';
+						throw false;
+					}
 				}
 				
 				// TODO: RegEx checks on these...

@@ -54,6 +54,10 @@ zheltaya.ru#@#+js(aopr, document.getElementById)garbage
 
 ! not in list of valid options $ (example: image)
 example.com$test
+$=testingNothingOnLeftOfEqualsSign
+$test=abcd123
+$ test=abcd123
+$ test
 ! no spaces after option commas
 example.com$1p, 3p
 ! options cannot be capitalized

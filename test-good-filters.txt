@@ -149,6 +149,21 @@ trk*.vidible.tv
 $third-party,xmlhttprequest,domain=alltube.pl|alltube.tv
 ||fastly.net/js/prebid$script,redirect=noopjs
 /google-analytics-$~image,~other
+@@*$csp,domain=conservativefiringline.com|addictinginfo.com
+@@||addictinginfo.*^$csp,1p
+||assets.adobedtm.com/*/satelliteLib$script,redirect-rule=noopjs,domain=8world.com
+||imasdk.googleapis.com/js/sdkloader/ima3.js$script,redirect-rule=noopjs,domain=8world.com
+||player.ooyala.com^$script,redirect-rule=noopjs,domain=8world.com
+||amazonaws.com^$xhr,redirect-rule=nooptext,domain=viu.com
+*$script,redirect-rule=noopjs,domain=ilmeteo.it
+*$script,redirect-rule=noopjs,domain=insideedition.com
+||px.moatads.com/pixel.gif$image,domain=abcya.com,redirect-rule=1x1.gif
+||amazon-adsystem.com/*/apstag.js$script,redirect-rule=amazon_apstag.js
+||uliza.jp^*/ulizahtml5-google-analytics.min.js|$script,redirect-rule=noop.js,domain=yomiuri.co.jp
+*$image,redirect-rule=1x1.gif,domain=play.cadenaser.com
+*$script,redirect-rule=noopjs,domain=corriere.it
+||googletagmanager.com/gtag/js$script,redirect-rule=googletagmanager_gtm.js,domain=asmhentai.com
+*$script,domain=larena.it,redirect-rule=noopjs
 ! the following are short aliases of other commands
 $ghide
 $shide
