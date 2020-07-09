@@ -212,7 +212,7 @@ export class AdBlockSyntaxLine {
 		
 	_lookForComments() {	
 		// uboPreParsingDirective !#
-		if ( this.toParse.startsWith('!#') ) {
+		if ( this.toParse.search(/!#[a-zA-Z0-9]/) !== -1 ) {
 			this.syntax['uboPreParsingDirective'] = this.string;
 			throw "not sure";
 		}

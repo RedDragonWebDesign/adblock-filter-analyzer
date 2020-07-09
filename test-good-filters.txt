@@ -76,6 +76,7 @@ pornve.com##+js(set, frg, 1)
 pornve.com##+js(window.open-defuser)
 youtube.com##+js(json-prune, playerResponse.adPlacements playerResponse.playerAds adPlacements playerAds)
 freenet.de##+js(acis, document.createElement, /\}\s*\(.*?\b(self|this|window)\b.*?\)/)
+@@||www.ruanyifeng.com^$csp=script-src 'self' * 'sha256-0McqMM66/wAVZmxF6zXpjNsb1UMbTl4LXBXdhqPKxws='
 
 ! #@#+js() exception
 ! per ublock documentation
@@ -246,6 +247,9 @@ tab.example.com##+js(set, adBlock, false)
 [ test
 [Nano Adblocker]
 [Adblock Plus 2.0]
+!### Temporary ###
+!#########################################
+!############### TEMPORARY ###############
 
 ! uboPreParsingDirective !#
 !#include ublock-filters.txt
@@ -261,7 +265,7 @@ tab.example.com##+js(set, adBlock, false)
 !+ PLATFORM(windows,mac,android)
 !+ NOT_PLATFORM(ext_safari, ext_android_cb, ios)
 
-! agCSSInjectionSelector & agCSSInjectionCSS #$?#
+! agCSSInjectionSelector & agCSSInjectionCSS #$?# - some of these fail ubo validation, due to cosmetic filters
 notebook-center.ru#$?#.leftCol > div[style^="height:"]:has(> div.head > h3:contains(/Поделиться|Нравится/)) { remove: true; }
 onlinemschool.com#$?#.share_buttons:has(> a) { position: absolute!important; left: -3000px!important; }
 buzzhand.com#$?#.mash-lightbox[-ext-has="div"] { display: none!important; }
@@ -272,9 +276,28 @@ dropgalaxy.com#$?#input[id^="adblock_"] { remove: true; }
 wstream.video#$?#body > div[id][style]:has(> div[style] > .jwplayer) { display: block!important; }
 wstream.video#$?##container div[id][style*="display:"]:not([style*="table-cell"]):has(.jwplayer) { display: block!important; }
 
-! agJSRule #%#
+! agJSRule #%# - fails ubo validation
 example.org#%#window.__gaq = undefined;
 
-! agJSException #@%#
+! agJSException #@%# - fails ubo validation
 example.com#@%#window.__gaq = undefined;
 spiegel.de#@%#!function(){function b(){}function a(a){return{get:function(){return a},set:b}}function c(a){a(!1)}AG_defineProperty('_sp_.config.content_control_callback',a(b)),AG_defineProperty('_sp_.config.spid_control_callback',a(b)),AG_defineProperty('_sp_.config.vid_control_callback',a(b)),AG_defineProperty('_sp_.config.disableBlockerStyleSheets',a(!1)),AG_defineProperty('_sp_.checkState',a(c)),AG_defineProperty('_sp_.isAdBlocking',a(c)),AG_defineProperty('_sp_.isAdblocking',a(c)),AG_defineProperty('_sp_.isContentBlockerPresent',a(c)),AG_defineProperty('_sp_.getSafeUri',a(function(a){return a})),AG_defineProperty('_sp_.pageChange',a(b)),AG_defineProperty('_sp_.setupSmartBeacons',a(b)),AG_defineProperty('_sp_.msg.startMsg',a(b)),document.addEventListener('sp.blocking',function(a){a.stopImmediatePropagation(),a=document.createEvent('Event'),a.initEvent('sp.not_blocking',!0,!1),this.dispatchEvent(a)})}();
+
+! agCSSInjectionException #@$?#
+
+
+! agExtendedSelectorException #@?#
+classic.dnvod.tv#@?#[data-code] > :not(object)
+classic.dnvod.tv#@?#[data-code] > [target="_blank"]
+classic.dnvod.tv#@?#[data-code] > :not([pluginspage="http://www.macromedia.com/go/getflashplayer"])
+sportowefakty.wp.pl#@?#body > [class]:not([id]):matches-css(position: fixed):matches-css(top: 0px)
+
+! agExtendedSelector #$# - CONFLICTS WITH abpSnippets #$#
+
+
+! agExtendedSelectorException #@$#
+kurnik.pl#@$#.adsbygoogle { height: 1px !important; width: 1px !important; }
+
+
+! agElementHiding #?# - CONFLICTS WITH abpExtendedSelector
+
