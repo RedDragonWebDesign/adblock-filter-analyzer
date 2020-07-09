@@ -78,11 +78,11 @@ export class AdBlockSyntaxBlock {
 		
 		this.json = this.countTrue + " valid, "
 			+ this.countNotSure + " unsure, "
-			+ this.countFalse + " invalid, "
+			+ this.countFalse + " errors, "
 			+ this.countComments + " comments, "
 			+ this.countMismatches + " mismatches"
 			+ "\n"
-			+ "For speed reasons, only the first few lines with errors will be shown."
+			+ "For speed reasons, only the first few errors will be shown."
 			+ "\n\n"
 			+ this.json;
 	}

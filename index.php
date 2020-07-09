@@ -23,11 +23,11 @@
 	</p>
 	
 	<p id="show-json-container">
-	<a href="javascript:;" onclick="document.getElementById('json-container').style.display = 'block'; document.getElementById('show-json-container').style.display = 'none';">Show Tree</a>
+	<a href="javascript:;" onclick="document.getElementById('json-container').style.display = 'block'; document.getElementById('show-json-container').style.display = 'none';">Show Error Details</a>
 	</p>
 	
 	<p id="json-container">
-	Analysis:<br />
+	Error Details:<br />
 	<textarea id="json" disabled></textarea>
 	</p>
 	
