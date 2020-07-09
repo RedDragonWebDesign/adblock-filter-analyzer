@@ -25,7 +25,6 @@ body {
 /* 18 colors */
 /* ideas: https://encycolorpedia.com/websafe */
 /* next up: {background-color: black; color: white;} */
-/* {background-color: #569CD6; color: white;} */
 
 .uboPreParsingDirective {background-color: orange}
 .agHint {background-color: #C586AB}
@@ -60,5 +59,8 @@ body {
 
 .uboScriptletException {background-color: aqua}
 .agJSException {background-color: aqua}
+
+.whitespaceFront {background-color: #569CD6; color: white;}
+.whitespaceBack {background-color: #569CD6; color: white;}
 
 .error {background-color: red !important; color: black;}

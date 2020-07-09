@@ -12,6 +12,7 @@ export class AdBlockSyntaxLine {
 	toParse = "";
 	// TODO: refactor this to have sub arrays, such as "code", "isValid", "tooltipText", etc.
 	syntax = {
+		'whitespaceFront': '',
 		'uboPreParsingDirective': '', // !#
 		'agHint': '', // !+
 		'comment': '', // !
@@ -34,6 +35,7 @@ export class AdBlockSyntaxLine {
 		// actionOperator type stuff must be on the bottom of this array, to make sure _checkForMismatch rebuilds the string in the correct order
 		'actionOperator': '', // :style() :remove()
 		'agCSSInjectionCSS': '', // { }
+		'whitespaceBack': '',
 	};
 	isValid = "not sure";
 	errorHint = "";
@@ -103,7 +105,9 @@ export class AdBlockSyntaxLine {
 		}
 		
 		// Delete regex. Regex is allowed to contain our special chars. When we do our searches, we don't want to get false positives.
+		// Trim, to prevent whitespace issues.
 		let s = this.string
+			.trim()
 			.replace(/^\/.*?[^\\]\//g, '')
 			.replace(/^@@\/.*?[^\\]\//g, '@@');
 		
@@ -184,11 +188,26 @@ export class AdBlockSyntaxLine {
 	
 	/** dice syntax string up into categories: comment !, exception @@, domain, option $, selectorException #@#, selector ##, abpExtendedSelector #?#, actionoperator :style(), abpSnippet #$#, etc. */
 	_categorizeSyntax() {
+		this._lookForWhitespace();
 		this._lookForComments();
 		this._lookForDomains();
 		// lookForActionOperators needs to come before lookForSelectors, even though actionOperators appear after selectors in the string.
 		this._lookForActionOperators();
 		this._lookForSelectors();
+	}
+	
+	_lookForWhitespace() {
+		let trimmed = this.toParse.trim();
+		if ( this.toParse !== trimmed ) {
+			let strPos = this.toParse.indexOf(trimmed);
+			this.syntax['whitespaceFront'] = this.toParse.slice(0, strPos);
+			
+			let whitespaceFrontLength = this.syntax['whitespaceFront'].length;
+			let trimmedLength = trimmed.length;
+			this.syntax['whitespaceBack'] = this.toParse.slice(whitespaceFrontLength + trimmedLength);
+			
+			this.toParse = trimmed;
+		}
 	}
 		
 	_lookForComments() {	
