@@ -413,7 +413,7 @@ export class AdBlockSyntaxLine {
 			}
 			
 			// check if our string contains =
-			let hasEquals = /^(.*)=.*$/.exec(value);
+			let hasEquals = /^(.*?)=.*$/.exec(value);
 			
 			if ( hasEquals ) {
 				// isolate the keyword to the left of equals
