@@ -14,6 +14,7 @@ ago.vermont.gov##.navhead.rad div[style="display: block; width: 1200px; height: 
 golfdigest.com##.component-sticky.site-header div[style*="overflow: hidden; height:"]
 www.yahoo.com##[class*="fixed-space"][class*="modal-open"]
 test.com##p:last-of-type
+ddrk.me##a[href="###"] img:not(#trk_hcaptcha):not([src^="https://captcha.su.baidu.com"])
 ! TODO: add a test for every selector
 ! https://www.w3schools.com/cssref/css_selectors.asp
 
@@ -187,6 +188,8 @@ badscript.js|
 ||atoshonetwork.com^$third-party
 trk*.vidible.tv
 &ctxId=*&pubId=*&clientDT=
+! ^ can be used in the MIDDLE of a domain
+@@||adobedtm.com^*/satellitelib-$script,domain=comenity.net
 
 ! options $ and option stuff ~ = | ,
 .snowplowanalytics.$domain=~snowplowanalytics.com
@@ -247,6 +250,7 @@ tab.example.com##+js(set, adBlock, false)
 [ test
 [Nano Adblocker]
 [Adblock Plus 2.0]
+!  
 !### Temporary ###
 !#########################################
 !############### TEMPORARY ###############
@@ -293,11 +297,35 @@ classic.dnvod.tv#@?#[data-code] > :not([pluginspage="http://www.macromedia.com/g
 sportowefakty.wp.pl#@?#body > [class]:not([id]):matches-css(position: fixed):matches-css(top: 0px)
 
 ! agExtendedSelector #$# - CONFLICTS WITH abpSnippets #$#
-
+example.com#$?#h3:contains(cookies) { display: none!important; }
 
 ! agExtendedSelectorException #@$#
 kurnik.pl#@$#.adsbygoogle { height: 1px !important; width: 1px !important; }
 
-
 ! agElementHiding #?# - CONFLICTS WITH abpExtendedSelector
+example.org#?#div:has(> a[target="_blank"][rel="nofollow"])
 
+! hosts file language
+#<localhost>
+127.0.0.1	localhost
+127.0.0.1	localhost.localdomain
+255.255.255.255	broadcasthost
+::1		localhost
+127.0.0.1	local
+::1		ip6-localhost ip6-loopback
+fe00::0		ip6-localnet
+ff00::0		ip6-mcastprefix
+ff02::1		ip6-allnodes
+ff02::2		ip6-allrouters
+ff02::3		ip6-allhosts
+#fe80::1%lo0	localhost
+#</localhost>
+#<shock-sites>
+# For example, to block unpleasant pages, try:
+127.0.0.1 goatse.cx       # More information on sites such as 
+127.0.0.1 www.goatse.cx   # these can be found in this article
+127.0.0.1 localhost
+::1 localhost #[IPv6]
+0.0.0.0 fr.a2dfp.net
+
+! note: ublock annoyances list is great for testing, has a large variety of filters
