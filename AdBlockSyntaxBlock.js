@@ -63,7 +63,7 @@ export class AdBlockSyntaxBlock {
 			if ( lineString !== '' ) {
 				let line = new AdBlockSyntaxLine(lineString);
 				// A large amount of JSON slows down the program. Only do JSON for first few errors.
-				if ( !line.isValid && counter < 25 ) {
+				if ( ! line.isValid && counter < 25 ) {
 					counter++;
 					this.json += line.getJSON() + "\n\n";
 				}
@@ -82,10 +82,7 @@ export class AdBlockSyntaxBlock {
 			this.json = this.json.slice(0, length - 2);
 		}
 		
-		this.json = this.countTrue + " valid, "
-			+ this.countNotSure + " unsure, "
-			+ this.countFalse + " errors, "
-			+ this.countComments + " comments, "
+		this.json = this.countFalse + " errors, "
 			+ this.countMismatches + " mismatches"
 			+ "\n"
 			+ "For speed reasons, only the first few errors will be shown."
