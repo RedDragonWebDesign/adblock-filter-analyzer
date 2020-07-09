@@ -113,7 +113,8 @@ export class AdBlockSyntaxLine {
 		
 		// look for double selectors $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# #$?# #%# #@%#
 		// had to take out $, too many false positives, it's used in CSS and +js()
-		let count = Helper.countRegExMatches(s, /\#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|#\$\?#|#%#|#@%#/);
+		// had to take out ## to fix a false positive
+		let count = Helper.countRegExMatches(s, /\#@#|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|#\$\?#|#%#|#@%#/);
 		if ( count > 1 ) {
 			this.errorHint = "selector-ish syntax $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# is only allowed once per filter";
 			throw false;
@@ -210,22 +211,22 @@ export class AdBlockSyntaxLine {
 		}
 	}
 		
-	_lookForComments() {	
+	_lookForComments() {
 		// uboPreParsingDirective !#
 		if ( this.toParse.search(/!#[a-zA-Z0-9]/) !== -1 ) {
-			this.syntax['uboPreParsingDirective'] = this.string;
+			this.syntax['uboPreParsingDirective'] = this.toParse;
 			throw "not sure";
 		}
 		
 		// agHint !+
 		if ( this.toParse.startsWith('!+') ) {
-			this.syntax['agHint'] = this.string;
+			this.syntax['agHint'] = this.toParse;
 			throw "not sure";
 		}
 		
-		// comment ! [
-		if ( this.string.startsWith('!') || this.string.startsWith('[') ) {
-			this.syntax['comment'] = this.string;
+		// comment ! [ #
+		if ( this.string.startsWith('!') || this.string.startsWith('[') || this.string.startsWith('#') ) {
+			this.syntax['comment'] = this.toParse;
 			throw true;
 		}
 	}
@@ -509,7 +510,6 @@ export class AdBlockSyntaxLine {
 			// I assume the scriptlet names are case sensitive, but I am not sure.
 			// ubo validator does not validate function names. Need to do thorough testing.
 			this.errorHint = 'uboScriptlet "' + trimmed + '" is not in the list of allowed uboScriptlets';
-			console.log(this.string + " || Invalid js() || " + trimmed);
 			throw false;
 		}
 	}
