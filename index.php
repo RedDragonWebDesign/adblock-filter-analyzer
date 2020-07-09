@@ -19,6 +19,7 @@
 	</p>
 	
 	<p>
+	<button id="clear">Clear</button> LineCount: <span id="line-count"></span><br>
 	<div id="rich-text" contenteditable="true"></div>
 	</p>
 	

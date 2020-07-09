@@ -10,6 +10,8 @@ import { Cursor }  from './Cursor.js';
 window.addEventListener('DOMContentLoaded', (e) => {
 	let json = document.getElementById('json');
 	let richText = document.getElementById('rich-text');
+	let clear = document.getElementById('clear');
+	let lineCount = document.getElementById('line-count');
 	
 	// load filter test into textarea, to be our default text
 	let xmlhttp = new XMLHttpRequest();
@@ -26,6 +28,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		json.value = block.getJSON();
 		richText.innerHTML = block.getRichText();
 		Cursor.setCurrentCursorPosition(offset, richText);
+		lineCount.innerHTML = block.getLineCount();
 		richText.focus(); // blinks the cursor
 	});
 	
@@ -38,6 +41,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		// insert text manually
 		document.execCommand("insertHTML", false, text);
 		richText.focus(); // shows the cursor
+	});
+	
+	clear.addEventListener('click', function(e) {
+		richText.innerHTML = "";
+		lineCount.innerHTML = 0;
 	});
 	
 	richText.dispatchEvent(new Event('input', { bubbles: true }));
