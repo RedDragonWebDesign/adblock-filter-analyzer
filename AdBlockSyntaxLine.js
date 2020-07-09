@@ -4,6 +4,7 @@
 "use strict";
 
 import { Helper } from './Helper.js';
+import { optionsWithoutEquals, optionsWithEquals } from './FunctionLists/options.js';
 
 export class AdBlockSyntaxLine {
 	string = "";
@@ -351,14 +352,14 @@ export class AdBlockSyntaxLine {
 		// actionoperator - split by SEMICOLONS
 	}
 	
-	/** now, do validation on each individual category */
+	/** validate the syntax within each category */
 	_validateEachCategory() {
-		let noSlashes;
+		let trimmed;
 		
 		if ( this.syntax['domainRegEx'] ) {
-			noSlashes = this.syntax['domainRegEx'].slice(1).slice(0, length - 1);
+			trimmed = this.syntax['domainRegEx'].slice(1).slice(0, length - 1);
 			try {
-				let regEx = new RegExp(noSlashes);
+				let regEx = new RegExp(trimmed);
 			} catch {
 				this.errorHint = "invalid RegEx";
 				throw false;
@@ -366,26 +367,69 @@ export class AdBlockSyntaxLine {
 		}
 		
 		if ( this.syntax['exceptionRegEx'] ) {
-			noSlashes = this.syntax['exceptionRegEx'].slice(3).slice(0, length - 1);
+			trimmed = this.syntax['exceptionRegEx'].slice(3).slice(0, length - 1);
 			try {
-				let regEx = new RegExp(noSlashes);
+				let regEx = new RegExp(trimmed);
 			} catch {
 				this.errorHint = "invalid RegEx";
 				throw false;
 			}
 		}
 		
-		// note: selector syntax is definitely case sensitive. URL's might be too
+		// option $
+		if ( this.syntax['option'] ) {
+			trimmed = this.syntax['option'].slice(1);
+			let optionsArray = trimmed.split(',');
+			for ( let value of optionsArray ) {
+				// if there's a ~ at the beginning, strip it out
+				if ( value.search(/^~/) !== -1 ) {
+					value = value.slice(1);
+				}
+				
+				// if option is in our list of options, it's valid
+				if ( optionsWithoutEquals.includes(value) ) {
+					continue;
+				}
+				
+				// check if our string contains =, if so isolate the left side
+				let match = /^([a-z0-9\-~]+)=.+$/.exec(value);
+				
+				// does not contain equals, not in our library of options
+				if ( ! match ) {
+					this.errorHint = 'option "' + value + '" is not in the library of valid options';
+					throw false;
+				}
+				
+				// contains equals, not in our library of options
+				if ( ! optionsWithEquals.includes(match[1]) ) {
+					this.errorHint = 'option "' + match[1] + '" is not in the library of valid options';
+					throw false;
+				}
+				
+				// TODO: RegEx checks on these...
+					// 'csp', // = [a-z\-:' ]
+					// 'denyallow', // = [a-z.|]
+					// 'domain', // = [~|a-z.]
+					// 'redirect', // = [a-z0-9\-.]
+					// 'rewrite', // = [a-z\-:]
+					// 'sitekey', // = [a-z]
+			}
+				
+		}
 		
-		// domain regex probably has to be all or nothing. can't mix in te/s/t because / can also be part of the URL
-		
-		// make sure that "cosmetic filters" in CSS selectors doesn't make filter invalid.
-		// Examples of "cosmetic filters":
-		// :has(...), :has-text(...), :if(...), :if-not(...), :matches-css(...), :matches-css-before(...), :matches-css-after(...), :min-text-length(n), :not(...), :nth-ancestor(n), :upward(arg), :watch-attr(...), :xpath(...)
-		
-		// uboScriptlet ##+js(
-		// must have domain, except for certain exceptions: #@#+js()
-		// are multiple allowed? Not sure. uBlock validator says yes. I can't find any double examples in filter lists though
+		// uboPreParsingDirective !#
+		// agHint !+
+		// exception @@
+		// domain
+		// selectorException #@#
+		// selector ##
+		// htmlFilter ##^
+		// htmlFilterException #@#^
+		// abpExtendedSelector #?#
+		// uboScriptlet ##+js()
+		// uboScriptletException #@#+js()
+		// abpSnippet #$#
+		// actionOperator :style() :remove()		
 	}
 	
 	/** Gets a string with a JSON representation of the syntax categories. Also prints isValid and errorHint. */

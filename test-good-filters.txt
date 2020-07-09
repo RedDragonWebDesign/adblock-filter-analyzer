@@ -148,12 +148,14 @@ trk*.vidible.tv
 .snowplowanalytics.$domain=~snowplowanalytics.com
 $third-party,xmlhttprequest,domain=alltube.pl|alltube.tv
 ||fastly.net/js/prebid$script,redirect=noopjs
+/google-analytics-$~image,~other
 ! the following are short aliases of other commands
 $ghide
 $shide
 $ehide
 $1p
 $3p
+$doc
 
 ! dollar signs not being used to indicate $options
 mac-torrent-download.net##+js(acis, $, AdBlock)
@@ -166,6 +168,18 @@ audiofanzine.com#$#abort-on-property-read TextDecoder; abort-on-property-read re
 vidlox.me#$#abort-current-inline-script Math zfgloaded
 oral-amateure.com#$#hide-if-contains-image-hash 00ff992d2c3efe08,38f8e0733b0d1f07,bf049c9cbc8c0f1e,e8caeae0e8f0f0f0
 zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read BetterJsPop; abort-on-property-read exoDocumentProtocol; abort-on-property-read ExLdr.serve; abort-on-property-read ExoLoader; abort-on-property-read ExoLoader.addZone; abort-on-property-read ExoLoader.serve; abort-on-property-read getexoloader; abort-current-inline-script document.dispatchEvent myEl; abort-on-property-read aNB
+
+! ok for lines to have whitespace at beginning and/or end: space, tab
+test.com  
+  test.com
+  test.com  
+worldofbitco.in##+js(set, adBlock, false) 
+ worldofbitco.in##+js(set, adBlock, false)
+tab.example.com##+js(set, adBlock, false)	  
+	tab.example.com
+   
+	
+! the above lines intentionally have whitespace only
 
 ! comments
 !comment with no space at beginning. shows up red in VS Code highlighting. passes ubo validator.
@@ -188,3 +202,10 @@ zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read BetterJsPo
 !+ NOT_OPTIMIZED PLATFORM(android)
 !+ PLATFORM(windows,mac,android)
 !+ NOT_PLATFORM(ext_safari, ext_android_cb, ios)
+
+! agCSSInjection #$?#
+notebook-center.ru#$?#.leftCol > div[style^="height:"]:has(> div.head > h3:contains(/Поделиться|Нравится/)) { remove: true; }
+onlinemschool.com#$?#.share_buttons:has(> a) { position: absolute!important; left: -3000px!important; }
+buzzhand.com#$?#.mash-lightbox[-ext-has="div"] { display: none!important; }
+buzzhand.com#$?#body[-ext-has="div"] { overflow: visible!important; }
+bowandtie.ru#$?#.social-likes { remove: true; }

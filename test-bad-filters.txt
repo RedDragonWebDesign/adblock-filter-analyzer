@@ -54,6 +54,10 @@ zheltaya.ru#@#+js(aopr, document.getElementById)garbage
 
 ! not in list of valid options $ (example: image)
 example.com$test
+! no spaces after option commas
+example.com$1p, 3p
+! options cannot be capitalized
+example.com$ALL
 
 ! not in list of valid abpSnippets #$# (example: log hello world!)
 example.com#$#test
