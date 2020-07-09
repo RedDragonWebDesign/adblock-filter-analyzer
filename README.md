@@ -5,6 +5,17 @@ Live version located at https://www.reddragonwebdesign.com/projects/AdBlock%20Fi
 
 I made this because I was teaching myself AdBlock filter language, and I had trouble finding a tool that diced the filters into their basic parts and explained what they were.
 
+## Features
+
+- Mainly a code coloring and learning tool. But does some validation too.
+- Handles very large files (30,000 lines will take a couple of seconds, but will parse)
+- Gives an error count and detailed error report
+- Colors 17 different kinds of syntax
+- Checks for some common errors
+- Validates RegEx
+- Checks options and uboScriptlets against a list of valid functions, marks as error if not found.
+- Colors and error checks as you type
+
 ## Tests
 
 This project is a perfect fit for Test Driven Development.
