@@ -57,8 +57,8 @@ export class AdBlockSyntaxBlock {
 	_parse(s) {
 		this.string = s;
 		let lines = s.split("\n");
-		this.lineCount = lines.length;
-		let counter = 0;
+		this.lineCount = lines.length - 1; // I'm not sure why array has an extra line, but it does, subtract 1 line from count
+				let counter = 0;
 		for ( let lineString of lines) {
 			if ( lineString !== '' ) {
 				let line = new AdBlockSyntaxLine(lineString);
