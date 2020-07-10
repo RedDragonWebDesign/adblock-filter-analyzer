@@ -3,7 +3,6 @@
 
 "use strict";
 
-import { Helper } from './Helper.js';
 import { AdBlockSyntaxLine }  from './AdBlockSyntaxLine.js';
 
 export class AdBlockSyntaxBlock {
@@ -19,6 +18,15 @@ export class AdBlockSyntaxBlock {
 	
 	parseString(s) {
 		this._parse(s);
+	}
+	
+	_unescapeHTML(input) {
+		return input
+			.replace(/&amp;/g, "&")
+			.replace(/&lt;/g, "<")
+			.replace(/&gt;/g, ">")
+			.replace(/&quot;/g, "\"")
+			.replace(/&#039;/g, "'");
 	}
 	
 	parseRichText(richText) {
@@ -38,7 +46,7 @@ export class AdBlockSyntaxBlock {
 		s = s.replace(/&nbsp;/g, " ");
 		// replace tab with 4 spaces
 		s = s.replace(/\t/g, "    ");
-		s = Helper.unescapeHTML(s);
+		s = this._unescapeHTML(s);
 		this._parse(s);
 	}
 	
