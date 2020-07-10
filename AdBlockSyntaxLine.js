@@ -16,6 +16,7 @@ export class AdBlockSyntaxLine {
 		'uboPreParsingDirective': '', // !#
 		'agHint': '', // !+
 		'comment': '', // !
+		'hosts': '',
 		'exception': '', // @@
 		'exceptionRegEx': '', // @@/regex/
 		'domainRegEx': '', // /regex/
@@ -32,7 +33,7 @@ export class AdBlockSyntaxLine {
 		'agCSSInjectionSelector': '', // #$?#
 		'agJSRule': '', // #%#
 		'agJSException': '', // #@%#
-		// actionOperator type stuff must be on the bottom of this array, to make sure _checkForMismatch rebuilds the string in the correct order
+		// actionOperator type stuff must be on the bottom, to make sure _checkForMismatch rebuilds the string in the correct order
 		'actionOperator': '', // :style() :remove()
 		'agCSSInjectionCSS': '', // { }
 		'whitespaceBack': '',
@@ -191,6 +192,7 @@ export class AdBlockSyntaxLine {
 	_categorizeSyntax() {
 		this._lookForWhitespace();
 		this._lookForComments();
+		this._lookForHosts();
 		this._lookForDomains();
 		// lookForActionOperators needs to come before lookForSelectors, even though actionOperators appear after selectors in the string.
 		this._lookForActionOperators();
@@ -208,6 +210,14 @@ export class AdBlockSyntaxLine {
 			this.syntax['whitespaceBack'] = this.toParse.slice(whitespaceFrontLength + trimmedLength);
 			
 			this.toParse = trimmed;
+		}
+	}
+	
+	_lookForHosts() {
+		// hosts file syntax - usually starts in 127.0.0.1 or 0.0.0.0
+		if ( this.toParse.startsWith('127.0.0.1') || this.toParse.startsWith('0.0.0.0') ) {
+			this.syntax['hosts'] = this.toParse;
+			throw "not sure";
 		}
 	}
 		

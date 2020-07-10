@@ -24,12 +24,13 @@ body {
 
 /* 18 colors */
 /* ideas: https://encycolorpedia.com/websafe */
-/* next up: {background-color: black; color: white;} */
 
 .uboPreParsingDirective {background-color: orange}
 .agHint {background-color: #C586AB}
 
 .comment {background-color: #6A9955}
+
+.hosts {background-color: black; color: white;}
 
 .exception {background-color: #D4D4D4}
 
