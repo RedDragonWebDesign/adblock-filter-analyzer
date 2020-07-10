@@ -61,7 +61,7 @@ export let optionsWithoutEquals = [
 ];
 
 export let optionsWithEquals = [
-	'csp', // = [a-z\-:' ]  // allowed both without equals and with equals
+	'csp', // = [a-z\-:' *]  // allowed both without equals and with equals
 	'denyallow', // = [a-z.|]
 	'domain', // = [~|a-z.]
 	'redirect', // = [a-z0-9\-./]
