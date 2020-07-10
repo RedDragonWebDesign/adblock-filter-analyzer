@@ -22,38 +22,49 @@ body {
 	display: inline-block;
 }
 
-/* 18 colors */
 /* ideas: https://encycolorpedia.com/websafe */
 
+/* PRE PARSING DIRECTIVES */
 .uboPreParsingDirective {background-color: orange}
 .agHint {background-color: #C586AB}
 
+/* COMMENTS */
 .comment {background-color: #6A9955}
 
+/* DOMAINS */
 .hosts {background-color: black; color: white;}
 
+.domain {background-color: #CE9178}
 .exception {background-color: #D4D4D4}
 
+.domainRegEx {background-color: navy; color: white;}
 .exceptionRegEx {background-color: yellow}
 
-.domainRegEx {background-color: navy; color: white;}
-
-.domain {background-color: #CE9178}
-
+/* SELECTORS */
 .option {background-color: lightblue}
 
-.selectorException {background-color: limegreen}
-.htmlFilterException {background-color: maroon; color: white;}
-
 .selector {background-color: #DCDCAA}
+.agStyling {background-color: #DCDCAA}
+
+.selectorException {background-color: limegreen}
+.agStylingException {background-color: limegreen}
+
 .htmlFilter {background-color: orange}
 
+.htmlFilterException {background-color: blue; color: white;}
+
 .abpExtendedSelector {background-color: rgba(112, 55, 16, 0.808); color: white;}
-.agCSSInjectionSelector {background-color: rgba(112, 55, 16, 0.808); color: white;}
+.agExtendedSelector {background-color: rgba(112, 55, 16, 0.808); color: white;}
+.agAdvancedStyling {background-color: rgba(112, 55, 16, 0.808); color: white;}
 
+.agExtendedSelectorException {background-color: maroon; color: white;}
+.agAdvancedStylingException {background-color: maroon; color: white;}
+
+/* ACTION OPERATORS */
 .actionOperator {background-color: gold}
-.agCSSInjectionCSS {background-color: gold}
+.agActionOperator {background-color: gold}
 
+/* SCRIPTS */
 .uboScriptlet {background-color: pink}
 .abpSnippet {background-color: pink}
 .agJSRule {background-color: pink}
@@ -61,7 +72,9 @@ body {
 .uboScriptletException {background-color: aqua}
 .agJSException {background-color: aqua}
 
+/* WHITESPACE */
 .whitespaceFront {background-color: #569CD6; color: white;}
 .whitespaceBack {background-color: #569CD6; color: white;}
 
+/* ERRORS */
 .error {background-color: red !important; color: black;}

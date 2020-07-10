@@ -15,6 +15,7 @@ golfdigest.com##.component-sticky.site-header div[style*="overflow: hidden; heig
 www.yahoo.com##[class*="fixed-space"][class*="modal-open"]
 test.com##p:last-of-type
 ddrk.me##a[href="###"] img:not(#trk_hcaptcha):not([src^="https://captcha.su.baidu.com"])
+strikeout.me##body > div:if(img[alt="AdBlock Alert"])
 ! TODO: add a test for every selector
 ! https://www.w3schools.com/cssref/css_selectors.asp
 
@@ -130,12 +131,6 @@ ameshkov.github.io###testdiv:watch-attr(id):has(p)
 fastbay.org##.detLink:has-text(VPN):xpath(../../..)
 facebook.com##:xpath(//div[@id="stream_pagelet"]//div[starts-with(@id,"hyperfeed_story_id_")][.//h6//span/text()="People You May Know"])
 
-! #?# - extended CSS
-! deprecated synonyms for :has()
-run.az#?#div[class$="bolmem"][-ext-has='load:contains(Sayğac)']
-businessinsider.in#?#div:-abp-has(> a[target="_self"][rel="nofollow,noindex"])
-strikeout.me##body > div:if(img[alt="AdBlock Alert"])
-
 ! HTML filters ##^
 newsbreak24.de##^script:has-text(===):has-text(/[\w\W]{14000}/)
 quoka.de##^script:has-text(/[\w\W]{35000}/)
@@ -225,12 +220,6 @@ watchmygf.me##+js(set, $.magnificPopup.open, noopFunc)
 run.az#?#div[class$="bolmem"]
 udenvirus.dk##th:has-text(/^Detection$/)
 
-! #$# - snippets
-audiofanzine.com#$#abort-on-property-read TextDecoder; abort-on-property-read require; abort-current-inline-script _audiofanzineProductStack
-vidlox.me#$#abort-current-inline-script Math zfgloaded
-oral-amateure.com#$#hide-if-contains-image-hash 00ff992d2c3efe08,38f8e0733b0d1f07,bf049c9cbc8c0f1e,e8caeae0e8f0f0f0
-zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read BetterJsPop; abort-on-property-read exoDocumentProtocol; abort-on-property-read ExLdr.serve; abort-on-property-read ExoLoader; abort-on-property-read ExoLoader.addZone; abort-on-property-read ExoLoader.serve; abort-on-property-read getexoloader; abort-current-inline-script document.dispatchEvent myEl; abort-on-property-read aNB
-
 ! ok for lines to have whitespace at beginning and/or end: space, tab
 test.com  
   test.com
@@ -269,41 +258,12 @@ tab.example.com##+js(set, adBlock, false)
 !+ PLATFORM(windows,mac,android)
 !+ NOT_PLATFORM(ext_safari, ext_android_cb, ios)
 
-! agCSSInjectionSelector & agCSSInjectionCSS #$?# - some of these fail ubo validation, due to cosmetic filters
-notebook-center.ru#$?#.leftCol > div[style^="height:"]:has(> div.head > h3:contains(/Поделиться|Нравится/)) { remove: true; }
-onlinemschool.com#$?#.share_buttons:has(> a) { position: absolute!important; left: -3000px!important; }
-buzzhand.com#$?#.mash-lightbox[-ext-has="div"] { display: none!important; }
-buzzhand.com#$?#body[-ext-has="div"] { overflow: visible!important; }
-bowandtie.ru#$?#.social-likes { remove: true; }
-leechall.com#$?##adBanner { remove: true; }
-dropgalaxy.com#$?#input[id^="adblock_"] { remove: true; }
-wstream.video#$?#body > div[id][style]:has(> div[style] > .jwplayer) { display: block!important; }
-wstream.video#$?##container div[id][style*="display:"]:not([style*="table-cell"]):has(.jwplayer) { display: block!important; }
-
 ! agJSRule #%# - fails ubo validation
 example.org#%#window.__gaq = undefined;
 
 ! agJSException #@%# - fails ubo validation
 example.com#@%#window.__gaq = undefined;
 spiegel.de#@%#!function(){function b(){}function a(a){return{get:function(){return a},set:b}}function c(a){a(!1)}AG_defineProperty('_sp_.config.content_control_callback',a(b)),AG_defineProperty('_sp_.config.spid_control_callback',a(b)),AG_defineProperty('_sp_.config.vid_control_callback',a(b)),AG_defineProperty('_sp_.config.disableBlockerStyleSheets',a(!1)),AG_defineProperty('_sp_.checkState',a(c)),AG_defineProperty('_sp_.isAdBlocking',a(c)),AG_defineProperty('_sp_.isAdblocking',a(c)),AG_defineProperty('_sp_.isContentBlockerPresent',a(c)),AG_defineProperty('_sp_.getSafeUri',a(function(a){return a})),AG_defineProperty('_sp_.pageChange',a(b)),AG_defineProperty('_sp_.setupSmartBeacons',a(b)),AG_defineProperty('_sp_.msg.startMsg',a(b)),document.addEventListener('sp.blocking',function(a){a.stopImmediatePropagation(),a=document.createEvent('Event'),a.initEvent('sp.not_blocking',!0,!1),this.dispatchEvent(a)})}();
-
-! agCSSInjectionException #@$?#
-
-
-! agExtendedSelectorException #@?#
-classic.dnvod.tv#@?#[data-code] > :not(object)
-classic.dnvod.tv#@?#[data-code] > [target="_blank"]
-classic.dnvod.tv#@?#[data-code] > :not([pluginspage="http://www.macromedia.com/go/getflashplayer"])
-sportowefakty.wp.pl#@?#body > [class]:not([id]):matches-css(position: fixed):matches-css(top: 0px)
-
-! agExtendedSelector #$# - CONFLICTS WITH abpSnippets #$#
-example.com#$?#h3:contains(cookies) { display: none!important; }
-
-! agExtendedSelectorException #@$#
-kurnik.pl#@$#.adsbygoogle { height: 1px !important; width: 1px !important; }
-
-! agElementHiding #?# - CONFLICTS WITH abpExtendedSelector
-example.org#?#div:has(> a[target="_blank"][rel="nofollow"])
 
 ! hosts file language
 #<localhost>
@@ -327,5 +287,87 @@ ff02::3		ip6-allhosts
 127.0.0.1 localhost
 ::1 localhost #[IPv6]
 0.0.0.0 fr.a2dfp.net
+
+! #?# - abpExtendedSelector
+businessinsider.in#?#div:-abp-has(> a[target="_self"][rel="nofollow,noindex"])
+iprima.cz#?#div:-abp-has(>.mone_header)
+zive.cz#?#div:-abp-has(>p:-abp-contains(REKLAMA))
+zive.cz#?#div:-abp-has(>small:-abp-contains(Reklamy))
+zive.cz#?#div:-abp-has(>[class$="selfpromo"])
+nasepenize.cz#?#:-abp-has(>[class$="selfpromo"])
+expres.cz,idnes.cz,emimino.cz#?#div:-abp-has(>span:-abp-contains(reklama))
+emimino.cz#?#div:-abp-has(>small:-abp-contains(Reklama))
+clanky.seznam.cz,search.seznam.cz#?#:-abp-has(> .Result--organic .Result-title-link:not([class="Result-title-link"]))
+clanky.seznam.cz,search.seznam.cz#?#.Result:-abp-has(.Result--organic [class^="Result-contentContainer _"])
+clanky.seznam.cz,search.seznam.cz#?#.Result.Result--organic:-abp-has(.Result-title + .Result-contentContainer > :not(.Result-url) > :not([class="Result-url-link Result-url-link--cr-result"]):not(span):not(.AnchorList-list))
+ajaxshowtime.com#?#div:-abp-properties(content: "Advertentie";)
+facebook.com#?#.ego_section:-abp-has(a:-abp-contains(/贊助|赞助内容|Sponsorlu|Sponsored|Gesponsert|Publicidad|Patrocinado|Sponsorisé|Sponsorizzato|Gesponsord|Sponsorowane|Реклама|Sponsa|Sponset|ממומן|Bersponsor|Ditaja|ได้รับการสนับสนุน|प्रायोजित|সৌজন্যে/))
+adageindia.in#?#div:-abp-has(> h2:-abp-contains(From the WEB))
+adageindia.in,bombaytimes.com#?#a:-abp-has(> div > p:-abp-contains(Ad: ))
+
+! agExtendedSelector #?# - CONFLICTS WITH abpExtendedSelector
+underverse.su,underver.se#?##sidebar1-wrap > noindex:has(> h3:contains(Социальные сети))
+musicrock24.ru#?#.art-layout-cell > div.art-box:has(> div.art-box-body > div.art-blockheader > h3:contains(Наша группа ВКонтакте!))
+info-comp.ru#?##secondary > div.widget:has(> div.textwidget div#vk_groups)
+blogs.oracle.com#?#body section[role="main"] > section[class]:has(> div[class] > ul.icn-socialcolors)
+novate.ru#?#.content > p:contains(Понравилась статья)
+novate.ru#?#.native > div[class="colored2"]:has(> .fb-like)
+vgorodekirove.ru#?#.c_mr_20.flexbox > span:contains(Поделиться)
+primagames.com#?#.article-grid > .row > .story.reservation:has(> .panel > .panel-body > .fb-page)
+roem.ru#?#footer > .entry-counters > span:contains(Поделиться)
+hi-chef.ru#?#.SocialMediaShareButton:upward(div:not([class]))
+
+! agExtendedSelectorException #@?#
+classic.dnvod.tv#@?#[data-code] > :not(object)
+classic.dnvod.tv#@?#[data-code] > [target="_blank"]
+classic.dnvod.tv#@?#[data-code] > :not([pluginspage="http://www.macromedia.com/go/getflashplayer"])
+sportowefakty.wp.pl#@?#body > [class]:not([id]):matches-css(position: fixed):matches-css(top: 0px)
+
+! #$# - abpSnippets
+audiofanzine.com#$#abort-on-property-read TextDecoder; abort-on-property-read require; abort-current-inline-script _audiofanzineProductStack
+vidlox.me#$#abort-current-inline-script Math zfgloaded
+oral-amateure.com#$#hide-if-contains-image-hash 00ff992d2c3efe08,38f8e0733b0d1f07,bf049c9cbc8c0f1e,e8caeae0e8f0f0f0
+zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read BetterJsPop; abort-on-property-read exoDocumentProtocol; abort-on-property-read ExLdr.serve; abort-on-property-read ExoLoader; abort-on-property-read ExoLoader.addZone; abort-on-property-read ExoLoader.serve; abort-on-property-read getexoloader; abort-current-inline-script document.dispatchEvent myEl; abort-on-property-read aNB
+anotherexample.com,example.com#$#log Hello
+debug.example.com#$#debug; log 'This should be prefixed by DEBUG'
+emoji.example.com#$#log '\u1F601\nand a new line'
+emoji.example.com#$#log \u1F601
+example.com#$#log 'Always log'; log 'And better twice than once'
+example.com#$#log Hello
+example.net,example.com#$#log 'Hello from an example to another example'
+example.net,example.com#$#log 'Hello it\'s me again'
+example.net,example.com#$#log Hello\ no\ quotes
+
+! agStyling #$# & agActionOperator {} - CONFLICTS WITH abpSnippets #$#
+! ========= SHOULD BE A DIFFERENT COLOR THAN THE SECTION ABOVE ==========
+ixbt.com#$#.b-socials__container { visibility: hidden !important; }
+hi-blog.ru#$#body { margin-bottom: 0 !important; }
+politico.com#$#.social-tools { visibility: hidden!important; }
+rynek-kolejowy.pl#$#.podzielSieZeZnajomymi > #divLikeMaly ~ * { visibility: hidden!important; }
+rynek-kolejowy.pl#$#.podzielSieZeZnajomymi >.podzielSieIkony > .fbLikeBox ~ * { visibility: hidden!important; }
+transport-publiczny.pl,rynekinfrastruktury.pl,rynek-lotniczy.pl#$#.wiadomoscSocial > #divLikeMaly ~ * { visibility: hidden!important; }
+theverge.com#$#.c-social-buttons { visibility: hidden!important; }
+top-radio.ru#$#.socialite { visibility: hidden!important; }
+freundin.de#$#.item-content__content { padding-top: 0px !important; }
+dailywire.com#$#.SocialMediaShareButton { visibility: hidden!important; }
+
+! agStylingException #@$# & agActionOperator {}
+kurnik.pl#@$#.adsbygoogle { height: 1px !important; width: 1px !important; }
+
+! agAdvancedStyling #$?# & agActionOperator {}
+! some of these fail ubo validation, due to cosmetic filters
+notebook-center.ru#$?#.leftCol > div[style^="height:"]:has(> div.head > h3:contains(/Поделиться|Нравится/)) { remove: true; }
+onlinemschool.com#$?#.share_buttons:has(> a) { position: absolute!important; left: -3000px!important; }
+buzzhand.com#$?#.mash-lightbox[-ext-has="div"] { display: none!important; }
+buzzhand.com#$?#body[-ext-has="div"] { overflow: visible!important; }
+bowandtie.ru#$?#.social-likes { remove: true; }
+leechall.com#$?##adBanner { remove: true; }
+dropgalaxy.com#$?#input[id^="adblock_"] { remove: true; }
+wstream.video#$?#body > div[id][style]:has(> div[style] > .jwplayer) { display: block!important; }
+wstream.video#$?##container div[id][style*="display:"]:not([style*="table-cell"]):has(.jwplayer) { display: block!important; }
+example.com#$?#h3:contains(cookies) { display: none!important; }
+
+! agAdvancedStylingException #@$?# & agActionOperator {}
+dropgalaxy.com#@$?#input[id^="adblock_"] { remove: true; }
 
 ! note: ublock annoyances list is great for testing, has a large variety of filters

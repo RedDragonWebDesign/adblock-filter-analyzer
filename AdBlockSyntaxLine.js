@@ -3,41 +3,51 @@
 
 "use strict";
 
-import { Helper } from './Helper.js';
 import { optionsWithoutEquals, optionsWithEquals } from './FunctionLists/options.js';
 import { uboScriptlets } from './FunctionLists/uboScriptlets.js';
+import { abpSnippets } from './FunctionLists/abpSnippets.js';
+import { abpExtendedSelectors } from './FunctionLists/abpExtendedSelectors.js';
 
 export class AdBlockSyntaxLine {
 	string = "";
 	toParse = "";
-	// TODO: refactor this to have sub arrays, such as "code", "isValid", "tooltipText", etc.
 	syntax = {
 		'whitespaceFront': '',
 		'uboPreParsingDirective': '', // !#
 		'agHint': '', // !+
 		'comment': '', // !
 		'hosts': '',
-		'exception': '', // @@
-		'exceptionRegEx': '', // @@/regex/
-		'domainRegEx': '', // /regex/
 		'domain': '',
+		'exception': '', // @@
+		'domainRegEx': '', // /regex/
+		'exceptionRegEx': '', // @@/regex/
 		'option': '', // $
-		'selectorException': '', // #@#
 		'selector': '', // ##
+		'selectorException': '', // #@#
 		'htmlFilter': '', // ##^
 		'htmlFilterException': '', // #@#^
 		'abpExtendedSelector': '', // #?#
 		'uboScriptlet': '', // ##+js()
 		'uboScriptletException': '', // #@#+js()
 		'abpSnippet': '', // #$#
-		'agCSSInjectionSelector': '', // #$?#
 		'agJSRule': '', // #%#
 		'agJSException': '', // #@%#
+		'agExtendedSelector': '', // #?#
+		'agExtendedSelectorException': '', // #@?#
+		'agStyling': '', // #$#
+		'agStylingException': '', // #@$#
+		'agAdvancedStyling': '', // #$?#
+		'agAdvancedStylingException': '', // #@$?#
 		// actionOperator type stuff must be on the bottom, to make sure _checkForMismatch rebuilds the string in the correct order
 		'actionOperator': '', // :style() :remove()
-		'agCSSInjectionCSS': '', // { }
+		'agActionOperator': '', // { }
 		'whitespaceBack': '',
 	};
+	// Below is used in a RegEx that isolates the domain from the selector. If you add a selector-ish symbol to the list above, you MUST add it here too
+	allSelectorsRegEx = /\$|##|#@#|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|#%#|#@%#|#\?#|#@\?#|#\$#|#@\$#|#\$\?#|#@\$\?#/;
+	allSelectorsExceptOptionRegEx = /##|#@#|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|#%#|#@%#|#\?#|#@\?#|#\$#|#@\$#|#\$\?#|#@\$\?#/;
+	// all selectors except $ and ##. Those two had too many false positives
+	allSelectorsExceptTwoRegEx = /#@#|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|#%#|#@%#|#\?#|#@\?#|#\$#|#@\$#|#\$\?#|#@\$\?#/;
 	isValid = "not sure";
 	errorHint = "";
 	
@@ -115,14 +125,14 @@ export class AdBlockSyntaxLine {
 		// look for double selectors $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# #$?# #%# #@%#
 		// had to take out $, too many false positives, it's used in CSS and +js()
 		// had to take out ## to fix a false positive
-		let count = Helper.countRegExMatches(s, /\#@#|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|#\$\?#|#%#|#@%#/);
+		let count = this._countRegExMatches(s, this.allSelectorsExceptTwoRegEx);
 		if ( count > 1 ) {
 			this.errorHint = "selector-ish syntax $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# is only allowed once per filter";
 			throw false;
 		}
 		
 		// look for double actionOperators
-		count = Helper.countRegExMatches(s, /:style\(|:remove\(/);
+		count = this._countRegExMatches(s, /:style\(|:remove\(/);
 		if ( count > 1 ) {
 			this.errorHint = "actionOperators :style() :remove() are only allowed once per filter";
 			throw false;
@@ -150,14 +160,14 @@ export class AdBlockSyntaxLine {
 			this.syntax['agJSException'] ||
 			this.syntax['option']
 		);
-		let countActionOperators = Helper.countRegExMatches(s, /:style\(|:remove\(/);
+		let countActionOperators = this._countRegExMatches(s, /:style\(|:remove\(/);
 		if ( bannedSyntaxPresent && countActionOperators ) {
 			this.errorHint = "actionOperators :style() :remove() cannot be used with ##+js( #@#+js( #$# $";
 			throw false;
 		}
 		
 		// @@exceptions may not contain any selectors except options
-		count = Helper.countRegExMatches(s, /\#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|:style\(|:remove\(|#\$\?#|#%#|#@%#|\{.*\}/);
+		count = this._countRegExMatches(s, this.allSelectorsExceptOptionRegEx);
 		let exception = ( this.syntax['exception'] || this.syntax['exceptionRegEx'] );
 		if ( exception && count ) {
 			this.errorHint = "@@ statements may not contain selector-ish syntax $ #@# ## ##^ #@#^ #?# ##+js( #@#+js( #$# or action operators :style() :remove()"
@@ -247,7 +257,7 @@ export class AdBlockSyntaxLine {
 		// domainRegEx /regex/
 		hasRegEx = (this.toParse.search(/^\/.*?[^\\]\//) !== -1);
 		noRegEx = this.toParse.replace(/^\/.*?[^\\]\//, '');
-		hasSelector = (noRegEx.search(/^\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|#\$\?#|#%#|#@%#/) !== -1);
+		hasSelector = (noRegEx.search(this.allSelectorsRegEx) !== -1);
 		hasNothingElse = (noRegEx.length === 0);
 		if ( hasRegEx && (hasSelector || hasNothingElse) ) {
 			regEx = this.toParse.slice(0, this.toParse.length - noRegEx.length);
@@ -259,7 +269,7 @@ export class AdBlockSyntaxLine {
 		// exceptionRegEx @@/regex/
 		hasRegEx = (this.toParse.search(/^@@\/.*?[^\\]\//) !== -1);
 		noRegEx = this.toParse.replace(/^@@\/.*?[^\\]\//, '');
-		hasSelector = (noRegEx.search(/^\$|#@#|##|##\^|#@#\^|#\?#|##\+js\(|#@#\+js\(|#\$#|#\$\?#|#%#|#@%#/) !== -1);
+		hasSelector = (noRegEx.search(this.allSelectorsRegEx) !== -1);
 		hasNothingElse = (noRegEx.length === 0);
 		if ( hasRegEx && (hasSelector || hasNothingElse) ) {
 			regEx = this.toParse.slice(0, this.toParse.length - noRegEx.length);
@@ -277,7 +287,7 @@ export class AdBlockSyntaxLine {
 		// domain
 		// parse until $ #@# ## #?# #$# #$?# #%# #@%#
 		// str.search returns first position, when searching from left to right (good)
-		let matchPos = this.toParse.search(/#@#|##|#\?#|#\$#|\$|#\$\?#|#%#|#@%#/);
+		let matchPos = this.toParse.search(this.allSelectorsRegEx);
 		// if no categories after the domain
 		if ( matchPos === -1 ) {
 			this.syntax['domain'] = this.toParse;
@@ -300,6 +310,15 @@ export class AdBlockSyntaxLine {
 		}
 	}
 	
+	_stringContains(string, array) {
+		for ( let value of array ) {
+			if ( string.indexOf(value) !== -1 ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	_lookForSelectors() {
 		// option $ (example: image)
 		if ( this.toParse.startsWith('$') ) {
@@ -309,18 +328,17 @@ export class AdBlockSyntaxLine {
 			throw "not sure";
 		}
 		
-		// abpSnippet #$# (example: log hello world!)
+		// abpSnippet #$#
+		// agStyling #$#
 		if ( this.toParse.startsWith('#$#') ) {
-			this.syntax['abpSnippet'] = this.toParse;
-			// Nothing allowed after it
-			throw "not sure";
-		}
-		
-		// uboScriptletException #@#+js(
-		if ( this.toParse.startsWith('#@#+js(') ) {
-			this.syntax['uboScriptletException'] = this.toParse;
-			// Nothing allowed after it
-			throw "not sure";
+			if ( this._stringContains(this.toParse, abpSnippets) ) {
+				this.syntax['abpSnippet'] = this.toParse;
+				// Nothing allowed after it
+				throw "not sure";
+			} else {
+				this.syntax['agStyling'] = this.toParse;
+				return;
+			}
 		}
 		
 		// uboScriptlet ##+js(
@@ -333,6 +351,13 @@ export class AdBlockSyntaxLine {
 				throw false;
 			}
 			
+			// Nothing allowed after it
+			throw "not sure";
+		}
+		
+		// uboScriptletException #@#+js(
+		if ( this.toParse.startsWith('#@#+js(') ) {
+			this.syntax['uboScriptletException'] = this.toParse;
 			// Nothing allowed after it
 			throw "not sure";
 		}
@@ -363,27 +388,51 @@ export class AdBlockSyntaxLine {
 			return;
 		}
 		
-		// selectorException #@#
-		if ( this.toParse.startsWith('#@#') ) {
-			this.syntax['selectorException'] = this.toParse;
-			return;
-		}
-		
 		// selector ##
 		if ( this.toParse.startsWith('##') ) {
 			this.syntax['selector'] = this.toParse;
 			return;
 		}
 		
-		// abpExtendedSelector #?#
-		if ( this.toParse.startsWith('#?#') ) {
-			this.syntax['abpExtendedSelector'] = this.toParse;
+		// selectorException #@#
+		if ( this.toParse.startsWith('#@#') ) {
+			this.syntax['selectorException'] = this.toParse;
 			return;
 		}
 		
-		// agCSSInjectionSelector #$?#
+		// abpExtendedSelector #?#
+		// agExtendedSelector #?#
+		if ( this.toParse.startsWith('#?#') ) {
+			if ( this._stringContains(this.toParse, abpExtendedSelectors) ) {
+				this.syntax['abpExtendedSelector'] = this.toParse;
+				return;
+			} else {
+				this.syntax['agExtendedSelector'] = this.toParse;
+				return;
+			}
+		}
+		
+		// agAdvancedStyling #$?#
 		if ( this.toParse.startsWith('#$?#') ) {
-			this.syntax['agCSSInjectionSelector'] = this.toParse;
+			this.syntax['agAdvancedStyling'] = this.toParse;
+			return;
+		}
+		
+		// agAdvancedStylingException #@$?#
+		if ( this.toParse.startsWith('#@$?#') ) {
+			this.syntax['agAdvancedStylingException'] = this.toParse;
+			return;
+		}
+		
+		// agExtendedSelectorException #@?#
+		if ( this.toParse.startsWith('#@?#') ) {
+			this.syntax['agExtendedSelectorException'] = this.toParse;
+			return;
+		}
+		
+		// agStylingException #@$#
+		if ( this.toParse.startsWith('#@$#') ) {
+			this.syntax['agStylingException'] = this.toParse;
 			return;
 		}
 	}
@@ -400,7 +449,7 @@ export class AdBlockSyntaxLine {
 		
 		matchPos = this.toParse.search(/\{.*\}$/);
 		if ( matchPos !== -1 ) {
-			this.syntax['agCSSInjectionCSS'] = this.toParse.slice(matchPos);
+			this.syntax['agActionOperator'] = this.toParse.slice(matchPos);
 			this.toParse = this.toParse.slice(0, matchPos);
 			return;
 		}
@@ -453,6 +502,29 @@ export class AdBlockSyntaxLine {
 		}
 	}
 	
+	_validateABPSnippet(trimmed) {
+		let snippetsArray = trimmed.split(';');
+		for ( let value of snippetsArray ) {
+			// if there's whitespace at the beginning, strip it out
+			let match = /^(\s+)/.exec(value);
+			if ( match ) {
+				value = value.slice(match[1].length);
+			}
+		
+			// delete everything except function name
+			let strPos = value.search(" ");
+			if ( strPos !== -1 ) {
+				value = value.slice(0, strPos);
+			}
+
+			// check whitelist
+			if ( ! abpSnippets.includes(value) ) {
+				this.errorHint = '"' + value + '" is not in the list of allowed abpSnippets';
+				throw false;
+			}
+		}
+	}
+	
 	/** validate the syntax within each category */
 	_validateEachCategory() {
 		let trimmed;
@@ -487,17 +559,13 @@ export class AdBlockSyntaxLine {
 			this._validateUBOScriptlet(trimmed);
 		}
 		
-		// uboPreParsingDirective !#
-		// agHint !+
-		// exception @@
-		// domain
-		// selectorException #@#
-		// selector ##
-		// htmlFilter ##^
-		// htmlFilterException #@#^
-		// abpExtendedSelector #?#
 		// abpSnippet #$#
-		// actionOperator :style() :remove()		
+		if ( this.syntax['abpSnippet'] ) {
+			trimmed = this.syntax['abpSnippet'].slice(3);
+			this._validateABPSnippet(trimmed);
+		}		
+		
+		// TODO: More. CSS selectors, CSS properties, etc.
 	}
 	
 	_validateUBOScriptlet(trimmed) {
@@ -549,11 +617,25 @@ export class AdBlockSyntaxLine {
 			}
 			if ( this.syntax[key] ) {
 				let s = this.syntax[key];
-				s = Helper.escapeHTML(s);
+				s = this._escapeHTML(s);
 				s = s.replace(/ /g, "&nbsp;");
 				richText += '<span class="' + classes + '">' + s + '</span>';
 			}
 		}
 		return richText;
+	}
+	
+	_countRegExMatches(str, regExPattern) {
+		regExPattern = new RegExp(regExPattern, "g");
+		return ((str || '').match(regExPattern) || []).length;
+	}
+
+	_escapeHTML(unsafe) {
+		return unsafe
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#039;");
 	}
 }
