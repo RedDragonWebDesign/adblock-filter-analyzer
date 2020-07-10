@@ -63,7 +63,7 @@ export class AdBlockSyntaxBlock {
 			if ( lineString !== '' ) {
 				let line = new AdBlockSyntaxLine(lineString);
 				// A large amount of JSON slows down the program. Only do JSON for first few errors.
-				if ( ! line.isValid && counter < 25 ) {
+				if ( ( line.isValid === false || line.isValid === "mismatch" ) && counter < 25 ) {
 					counter++;
 					this.json += line.getJSON() + "\n\n";
 				}
