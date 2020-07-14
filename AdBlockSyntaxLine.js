@@ -244,8 +244,14 @@ export class AdBlockSyntaxLine {
 			throw "not sure";
 		}
 		
-		// comment ! [ #
-		if ( this.string.startsWith('!') || this.string.startsWith('[') || this.string.startsWith('#') ) {
+		// comment ! [
+		if ( this.string.startsWith('!') || this.string.startsWith('[') ) {
+			this.syntax['comment'] = this.toParse;
+			throw true;
+		}
+		
+		// comment # (but not ## or ###)
+		if ( this.string.startsWith('#') && ! this.string.startsWith('##') && ! this.string.startsWith('###') ) {
 			this.syntax['comment'] = this.toParse;
 			throw true;
 		}
