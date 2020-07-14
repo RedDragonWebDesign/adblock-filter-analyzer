@@ -38,6 +38,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		e.preventDefault();
 		// get text representation of clipboard
 		var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+		// fix #5 rich test paste, tab is not rendering correctly
+		text = text.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
 		// insert text manually
 		document.execCommand("insertHTML", false, text);
 		richText.focus(); // shows the cursor
