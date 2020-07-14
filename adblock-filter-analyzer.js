@@ -13,11 +13,22 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	let clear = document.getElementById('clear');
 	let lineCount = document.getElementById('line-count');
 	
+	/** Do some HTML escape, convert tabs to &nbsp, convert enters to <br>. Prevents bugs when pasting and importing from file into richTextBox. */
+	function processPastedText(text) {
+		text = text.replace(/</g, "&lt;");
+		text = text.replace(/>/g, "&gt;");
+		text = text.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+		text = text.replace(/\r\n/g, "<br>");
+		text = text.replace(/\n/g, "<br>");
+		return text;
+	}
+	
 	// load filter test into textarea, to be our default text
 	let xmlhttp = new XMLHttpRequest();
 	xmlhttp.open('GET', 'tests/test-good-filters.txt', false);
 	xmlhttp.send();
 	let text = xmlhttp.responseText;
+	text = processPastedText(text);
 	richText.innerHTML = text;
 	
 	richText.addEventListener('input', function(e) {
@@ -38,11 +49,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		e.preventDefault();
 		// get text representation of clipboard
 		var text = (e.originalEvent || e).clipboardData.getData('text/plain');
-		// fix #5 rich test paste, tab is not rendering correctly
-		text = text.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
-		// fix #33 Ctrl-A then paste sometimes messes up the last line, puts a space
-		text = text.replace(/\r\n/g, "<br>");
-		text = text.replace(/\n/g, "<br>");
+		text = processPastedText(text);
 		// insert text manually
 		document.execCommand("insertHTML", false, text);
 		richText.focus(); // shows the cursor
