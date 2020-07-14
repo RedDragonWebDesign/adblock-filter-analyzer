@@ -40,6 +40,9 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		var text = (e.originalEvent || e).clipboardData.getData('text/plain');
 		// fix #5 rich test paste, tab is not rendering correctly
 		text = text.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+		// fix #33 Ctrl-A then paste sometimes messes up the last line, puts a space
+		text = text.replace(/\n\r/g, "<br>");
+		text = text.replace(/\n/g, "<br>");
 		// insert text manually
 		document.execCommand("insertHTML", false, text);
 		richText.focus(); // shows the cursor
