@@ -10,7 +10,7 @@ I made this because I was teaching myself AdBlock filter language, and I had tro
 - Mainly a code coloring and learning tool. But does some validation too.
 - Handles very large files (30,000 lines will take a couple of seconds, but will parse)
 - Gives an error count and detailed error report
-- Colors 17 different kinds of syntax
+- Colors 29 different kinds of syntax
 - Checks for some common errors
 - Validates RegEx
 - Checks options and uboScriptlets against a list of valid functions, marks as error if not found.

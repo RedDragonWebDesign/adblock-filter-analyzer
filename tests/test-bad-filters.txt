@@ -109,6 +109,8 @@ example.com##test:style(width: bob px;)
 http://www.example.com/grave`accent
 http://www.example.com/pi|pe
 www.example.com/中文/北京[city]
+! ubo validator says domain filter can't end in period
+twitch.
 
 ! garbage text (not a filter)
 <textarea></textarea></textarea> " " ' ' < > & &

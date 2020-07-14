@@ -23,6 +23,7 @@ body {
 }
 
 /* ideas: https://encycolorpedia.com/websafe */
+/* next color: make pre parsing directives the same color and steal one of the colors */
 
 /* PRE PARSING DIRECTIVES */
 .uboPreParsingDirective {background-color: orange}
