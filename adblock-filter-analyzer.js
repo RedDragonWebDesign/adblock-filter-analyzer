@@ -80,21 +80,27 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	richText.addEventListener("mouseover", addDescription, false);
 	richText.addEventListener("mousewheel", addDescription, false);
 	
+	// when picking a filter list to load from the combo box
 	filterList.addEventListener("change", function(e) {
 		if ( ! filterList.value ) {
 			richText.innerHTML = "";
 			return;
 		}
 		
-		let xmlhttp = new XMLHttpRequest();
-		xmlhttp.open('GET', filterList.value, false);
-		xmlhttp.send();
-		let text = xmlhttp.responseText;
-		
-		text = processPastedText(text);
-		richText.innerHTML = text;
-		Cursor.setCurrentCursorPosition(0, richText);
-		richText.dispatchEvent(new Event('input', { bubbles: true }));
+		let text;
+		try {
+			let xmlhttp = new XMLHttpRequest();
+			xmlhttp.open('GET', filterList.value, false);
+			xmlhttp.send();
+			text = xmlhttp.responseText;
+			
+			text = processPastedText(text);
+			richText.innerHTML = text;
+			Cursor.setCurrentCursorPosition(0, richText);
+			richText.dispatchEvent(new Event('input', { bubbles: true }));
+		} catch(DOMException) {
+			richText.innerHTML = "CORS policy error. The website we are trying to fetch these filters from is not allowing our script to access it.";
+		}
 	});
 	
 	filterList.dispatchEvent(new Event('change', { bubbles: true }));
