@@ -17,7 +17,7 @@ body {
 
 #rich-text {
 	width: 65%;
-	height: 450px;
+	height: 425px;
 	border: 1px solid black;
 	cursor: text;
 	overflow: scroll;
@@ -28,7 +28,7 @@ body {
 
 #definition {
 	width: 35%;
-	height: 450px;
+	height: 425px;
 	border: 1px solid black;
 	overflow: scroll;
 	resize: both;
