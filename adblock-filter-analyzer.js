@@ -14,6 +14,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	let clear = document.getElementById('clear');
 	let lineCount = document.getElementById('line-count');
 	let definition = document.getElementById('definition');
+	let filterList = document.getElementById('filter-list');
 	
 	/** Do some HTML escape, convert tabs to &nbsp, convert enters to <br>. Prevents bugs when pasting and importing from file into richTextBox. */
 	function processPastedText(text) {
@@ -24,14 +25,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		text = text.replace(/\n/g, "<br>");
 		return text;
 	}
-	
-	// load filter test into textarea, to be our default text
-	let xmlhttp = new XMLHttpRequest();
-	xmlhttp.open('GET', 'tests/test-good-filters.txt', false);
-	xmlhttp.send();
-	let text = xmlhttp.responseText;
-	text = processPastedText(text);
-	richText.innerHTML = text;
 	
 	richText.addEventListener('input', function(e) {
 		// In theory, we should need some escapeHTML's and unescapeHTML's around here. In actual testing, anything being written into the <textarea> by JS didn't need to be escaped.
@@ -62,8 +55,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		lineCount.innerHTML = 0;
 	});
 	
-	richText.dispatchEvent(new Event('input', { bubbles: true }));
-	
 	/** Provides functionality for hovering over a highlight and getting the syntax description */
 	function addDescription(e) {
 		e = e || window.event;
@@ -86,4 +77,22 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	
 	richText.addEventListener("mouseover", addDescription, false);
 	richText.addEventListener("mousewheel", addDescription, false);
+	
+	filterList.addEventListener("change", function(e) {
+		if ( ! filterList.value ) {
+			richText.innerHTML = "";
+			return;
+		}
+		
+		let xmlhttp = new XMLHttpRequest();
+		xmlhttp.open('GET', filterList.value, false);
+		xmlhttp.send();
+		let text = xmlhttp.responseText;
+		
+		text = processPastedText(text);
+		richText.innerHTML = text;
+		richText.dispatchEvent(new Event('input', { bubbles: true }));
+	});
+	
+	filterList.dispatchEvent(new Event('change', { bubbles: true }));
 });
