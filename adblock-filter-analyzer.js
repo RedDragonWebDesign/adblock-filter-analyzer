@@ -64,8 +64,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	
 	richText.dispatchEvent(new Event('input', { bubbles: true }));
 	
-	// Provides functionality for hovering over a highlight and getting the syntax description
-	richText.addEventListener("mouseover", function(e) {
+	/** Provides functionality for hovering over a highlight and getting the syntax description */
+	function addDescription(e) {
 		e = e || window.event;
 		
 		var targetElem = e.target || e.srcElement;
@@ -82,5 +82,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
 				if ( myClass === "error" ) break;
 			}
 		}
-	}, false);
+	}
+	
+	richText.addEventListener("mouseover", addDescription, false);
+	richText.addEventListener("mousewheel", addDescription, false);
 });
