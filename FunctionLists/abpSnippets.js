@@ -6,7 +6,7 @@
 // https://help.eyeo.com/en/adblockplus/snippet-filters-tutorial
 // https://easylist-downloads.adblockplus.org/abp-filters-anti-cv.txt
 export let abpSnippets = [
-	'log ', // adding space here so that #$#logo (agStyling) doesn't return a match for abpSnippets
+	'log',
 	'uabinject-defuser',
 	'hide-if-shadow-contains',
 	'hide-if-contains',

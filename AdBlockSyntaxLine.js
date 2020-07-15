@@ -349,7 +349,10 @@ export class AdBlockSyntaxLine {
 		// abpSnippet #$#
 		// agStyling #$#
 		if ( this.toParse.startsWith('#$#') ) {
-			if ( this._stringContains(this.toParse, abpSnippets) ) {
+			if ( this.toParse.startsWith('#$#.') || this.toParse.startsWith('#$##') ) {
+				this.syntax['agStyling'] = this.toParse;
+				return;
+			} else if ( this._stringContains(this.toParse, abpSnippets) ) {
 				this.syntax['abpSnippet'] = this.toParse;
 				// Nothing allowed after it
 				throw "not sure";
