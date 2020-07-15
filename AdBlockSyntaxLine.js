@@ -258,36 +258,30 @@ export class AdBlockSyntaxLine {
 	}
 	
 	_lookForDomains() {
-		let regEx, hasRegEx, noRegEx, hasSelector, hasNothingElse;
+		// exception @@
+		if ( this.string.startsWith('@@') ) {
+			this.syntax['exception'] = '@@';
+			this.toParse = this.toParse.slice(2);
+		}
 		
 		// domainRegEx /regex/
-		hasRegEx = (this.toParse.search(/^\/.*?[^\\]\//) !== -1);
-		noRegEx = this.toParse.replace(/^\/.*?[^\\]\//, '');
-		hasSelector = (noRegEx.search(this.allSelectorsRegEx) !== -1);
-		hasNothingElse = (noRegEx.length === 0);
-		if ( hasRegEx && (hasSelector || hasNothingElse) ) {
-			regEx = this.toParse.slice(0, this.toParse.length - noRegEx.length);
+		let hasRegEx = (this.toParse.search(/^\/.*?[^\\]\//) !== -1);
+		let nonRegEx = this.toParse.replace(/^\/.*?[^\\]\//, '');
+		let hasSelector = (nonRegEx.search(this.allSelectorsRegEx) !== -1);
+		let startsWithSelector = (nonRegEx.search(this.allSelectorsRegEx) === 0);
+		let hasNothingElse = (nonRegEx.length === 0);
+		if ( hasRegEx && (startsWithSelector || hasNothingElse) ) {
+			let regEx = this.toParse.slice(0, this.toParse.length - nonRegEx.length);
 			this.syntax['domainRegEx'] = regEx;
-			this.toParse = noRegEx;
-			return;
-		}
+			this.toParse = nonRegEx;
 		
-		// exceptionRegEx @@/regex/
-		hasRegEx = (this.toParse.search(/^@@\/.*?[^\\]\//) !== -1);
-		noRegEx = this.toParse.replace(/^@@\/.*?[^\\]\//, '');
-		hasSelector = (noRegEx.search(this.allSelectorsRegEx) !== -1);
-		hasNothingElse = (noRegEx.length === 0);
-		if ( hasRegEx && (hasSelector || hasNothingElse) ) {
-			regEx = this.toParse.slice(0, this.toParse.length - noRegEx.length);
-			this.syntax['exceptionRegEx'] = regEx;
-			this.toParse = noRegEx;
+			if ( this.syntax['exception'] ) {
+				this.syntax['exception'] = '';
+				this.syntax['exceptionRegEx'] = '@@' + this.syntax['domainRegEx'];
+				this.syntax['domainRegEx'] = '';
+			}
+			
 			return;
-		}
-		
-		// exception @@
-		let domainException = false;
-		if ( this.string.startsWith('@@') ) {
-			domainException = true;
 		}
 		
 		// domain
@@ -303,15 +297,28 @@ export class AdBlockSyntaxLine {
 			this.toParse = this.toParse.slice(matchPos);
 		}
 		
+		// if domain starts and ends in /, and it wasn't caught in the RegEx code above, it's probably a badly formed RegEx. Assign it to RegEx, and _lookForErrors will throw an error for it later.
+		if ( this.syntax['domain'].startsWith('/') && this.syntax['domain'].endsWith('/') ) {
+			if ( this.syntax['exception'] ) {
+				this.syntax['exception'] = '';
+				this.syntax['exceptionRegEx'] = '@@' + this.syntax['domain'];
+				this.syntax['domain'] = '';
+			} else {
+				this.syntax['domainRegEx'] = this.syntax['domain'];
+				this.syntax['domain'] = '';
+			}
+			return;
+		}
+		
 		// exception @@ must have a domain
-		if ( domainException && ! this.syntax['domain'] ) {
+		if ( this.syntax['exception'] && ! this.syntax['domain'] ) {
 			this.errorHint = "exception @@ must have a domain";
 			throw false;
 		}
 		
 		// exception @@
-		if ( domainException ) {
-			this.syntax['exception'] = this.syntax['domain'];
+		if ( this.syntax['exception'] ) {
+			this.syntax['exception'] += this.syntax['domain'];
 			this.syntax['domain'] = "";
 		}
 	}
