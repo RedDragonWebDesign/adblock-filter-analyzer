@@ -46,6 +46,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		var text = (e.originalEvent || e).clipboardData.getData('text/plain');
 		text = processPastedText(text);
 		// insert text manually
+		Cursor.setCurrentCursorPosition(0, richText);
 		document.execCommand("insertHTML", false, text);
 		richText.focus(); // shows the cursor
 	});
@@ -53,6 +54,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	clear.addEventListener('click', function(e) {
 		richText.innerHTML = "";
 		lineCount.innerHTML = 0;
+		filterList.value = "";
 	});
 	
 	/** Provides functionality for hovering over a highlight and getting the syntax description */
@@ -91,6 +93,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 		
 		text = processPastedText(text);
 		richText.innerHTML = text;
+		Cursor.setCurrentCursorPosition(0, richText);
 		richText.dispatchEvent(new Event('input', { bubbles: true }));
 	});
 	
