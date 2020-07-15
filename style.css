@@ -11,8 +11,12 @@ body {
 	height: 400px;
 }
 
+#flex-container {
+	display: flex;
+}
+
 #rich-text {
-	width: 100%;
+	width: 65%;
 	height: 450px;
 	border: 1px solid black;
 	cursor: text;
@@ -20,6 +24,14 @@ body {
 	resize: both;
 	/* in Chrome, must have display: inline-block for contenteditable=true to prevent it from adding <div> <p> and <span> when you type. This fixes GitHub bug #23 double enter when hitting enter at end of file and #24 hitting backspace at end does not work*/
 	display: inline-block;
+}
+
+#definition {
+	width: 35%;
+	height: 450px;
+	border: 1px solid black;
+	overflow: scroll;
+	resize: both;
 }
 
 /* ideas: https://encycolorpedia.com/websafe */

@@ -1,6 +1,7 @@
-let tooltips = {
+export let tooltips = {
 	'uboPreParsingDirective': // !#
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - !#</li>
 		<li>@name - uBlock Origin Pre-Parsing Directive</li>
 		<li>@description - The pre-parsing directives are executed before a list content is parsed, and influence the final content of a filter list.</li>
@@ -10,9 +11,11 @@ let tooltips = {
 		<li>@special-characters - !not</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'agHint': // !+
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - !+</li>
 		<li>@name - AdGuard Hint</li>
 		<li>@description - </li>
@@ -22,9 +25,11 @@ let tooltips = {
 		<li>@special-characters -</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'comment': // ! or [
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - ! or [</li>
 		<li>@name - Comment</li>
 		<li>@description - </li>
@@ -34,9 +39,11 @@ let tooltips = {
 		<li>@special-characters -</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'domain':
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - </li>
 		<li>@name - URL To Block</li>
 		<li>@description - </li>
@@ -51,9 +58,11 @@ let tooltips = {
 			,multiple</li>
 		<li>@function-library - </li>
 		<li>@tip - Ad blockers add an invisible wildcard to the beginning and end of the URL you type in. Use the special characters above to set limits on these wildcards.</li>
-		</ul>`,
+		</ul>
+		`,
 	'exception': // @@
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - @@</li>
 		<li>@name - Exception URL</li>
 		<li>@description - </li>
@@ -68,9 +77,11 @@ let tooltips = {
 			,multiple</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'domainRegEx': // /regex/
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - /regex/</li>
 		<li>@name - URL To Block that uses Regular Expressions</li>
 		<li>@description - </li>
@@ -80,9 +91,11 @@ let tooltips = {
 		<li>@special-characters - RegEx -[]{}()*+?.,\^$|#/</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'exceptionRegEx': // @@/regex/
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - @@/regex/</li>
 		<li>@name - Exception URL that uses Regular Expressions</li>
 		<li>@description - </li>
@@ -92,9 +105,11 @@ let tooltips = {
 		<li>@special-characters - RegEx -[]{}()*+?.,\^$|#/</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`, // TODO: make sure that this line displays correctly
+		</ul>
+		`, // TODO: make sure that this line displays correctly
 	'option': // $
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - $</li>
 		<li>@name - Filter Option</li>
 		<li>@description - </li>
@@ -104,9 +119,11 @@ let tooltips = {
 		<li>@special-characters - ~except |or ,multiple =list</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'selectorException': // #@#
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - #@#</li>
 		<li>@name - CSS Selector Exception</li>
 		<li>@description - </li>
@@ -116,9 +133,11 @@ let tooltips = {
 		<li>@special-characters - CSS Selectors .#*,>+~[]=|^$:()</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'selector': // ##
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - ##</li>
 		<li>@name - CSS Selector</li>
 		<li>@description - </li>
@@ -129,9 +148,11 @@ let tooltips = {
 		<li>@function-library - </li>
 		<li>@tip - Blocking an element by #id or .class are the most common. You'd type this in as example.com###id or example.com##.class</li>
 		<li>@tip2 - :has-text(text) or :has-text(/regex/) is a great way to block elements containing specific text</li>
-		</ul>`,
+		</ul>
+		`,
 	'htmlFilter': // ##^
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - ##^</li>
 		<li>@name - HTML Filter</li>
 		<li>@description - </li>
@@ -141,9 +162,11 @@ let tooltips = {
 		<li>@special-characters - CSS Selectors .#*,>+~[]=|^$:()</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'htmlFilterException': // #@#^
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - #@#^</li>
 		<li>@name - HTML Filter Exception</li>
 		<li>@description - </li>
@@ -153,9 +176,11 @@ let tooltips = {
 		<li>@special-characters - CSS Selectors .#*,>+~[]=|^$:()</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'abpExtendedSelector': // #?#
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - #?#</li>
 		<li>@name - AdBlockPlus Extended CSS Selector</li>
 		<li>@description - </li>
@@ -165,9 +190,11 @@ let tooltips = {
 		<li>@special-characters - CSS Selectors .#*,>+~[]=|^$:()</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'actionOperator': // :style() :remove()
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - :style() or :remove()</li>
 		<li>@name - Action Operator</li>
 		<li>@description - </li>
@@ -177,9 +204,11 @@ let tooltips = {
 		<li>@special-characters - CSS Properties :;,()!</li>
 		<li>@function-library - </li>
 		<li>@tip - :style(position: absolute !important;) or :style(position: relative !important) is a great way to make floating toolbars not float anymore.</li>
-		</ul>`,
+		</ul>
+		`,
 	'uboScriptlet': // ##+js()
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - ##+js()</li>
 		<li>@name - uBlock Origin Scriptlet</li>
 		<li>@description - </li>
@@ -189,9 +218,11 @@ let tooltips = {
 		<li>@special-characters - ,</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'uboScriptletException': // #@#+js()
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - #@#+js()</li>
 		<li>@name - uBlock Origin Scriptlet Exception</li>
 		<li>@description - </li>
@@ -201,9 +232,11 @@ let tooltips = {
 		<li>@special-characters - ,</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`,
+		</ul>
+		`,
 	'abpSnippet': // #$#
-		`<ul>
+		`
+		<ul>
 		<li>@syntax - #$#</li>
 		<li>@name - AdBlockPlus Snippet</li>
 		<li>@description - </li>
@@ -213,5 +246,6 @@ let tooltips = {
 		<li>@special-characters - ;</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
-		</ul>`
+		</ul>
+		`
 };

@@ -5,6 +5,7 @@
 
 import { AdBlockSyntaxBlock }  from './AdBlockSyntaxBlock.js';
 import { Cursor }  from './Cursor.js';
+import { tooltips } from './tooltips.js';
 
 // This line not optional. Content loads top to bottom. Need to wait until DOM is fully loaded.
 window.addEventListener('DOMContentLoaded', (e) => {
@@ -12,6 +13,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	let richText = document.getElementById('rich-text');
 	let clear = document.getElementById('clear');
 	let lineCount = document.getElementById('line-count');
+	let definition = document.getElementById('definition');
 	
 	/** Do some HTML escape, convert tabs to &nbsp, convert enters to <br>. Prevents bugs when pasting and importing from file into richTextBox. */
 	function processPastedText(text) {
@@ -61,4 +63,24 @@ window.addEventListener('DOMContentLoaded', (e) => {
 	});
 	
 	richText.dispatchEvent(new Event('input', { bubbles: true }));
+	
+	// Provides functionality for hovering over a highlight and getting the syntax description
+	richText.addEventListener("mouseover", function(e) {
+		e = e || window.event;
+		
+		var targetElem = e.target || e.srcElement;
+		
+		// tags must be capitalized for some reason
+		if ( targetElem.nodeName === "SPAN" ) {
+			let myClasses = targetElem.className.split(" ");
+			for ( let myClass of myClasses ) {
+				let descriptionText = tooltips[myClass];
+				descriptionText = `<h2><span class="` + myClass + `">` + myClass + `</span></h2>` + descriptionText;
+				definition.innerHTML = descriptionText;
+				
+				// make sure error overwrites everything else
+				if ( myClass === "error" ) break;
+			}
+		}
+	}, false);
 });
