@@ -250,8 +250,13 @@ export class AdBlockSyntaxLine {
 			throw true;
 		}
 		
-		// comment # (but not ## or ###)
-		if ( this.string.startsWith('#') && ! this.string.startsWith('##') && ! this.string.startsWith('###') ) {
+		// comment # (but not ## or ### or #@#+js(
+		if (
+			this.string.startsWith('#') &&
+			! this.string.startsWith('##') &&
+			! this.string.startsWith('###') &&
+			! this.string.startsWith('#@#+js')
+		) {
 			this.syntax['comment'] = this.toParse;
 			throw true;
 		}
