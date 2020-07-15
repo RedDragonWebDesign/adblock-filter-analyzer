@@ -328,8 +328,11 @@ export class AdBlockSyntaxLine {
 		}
 	}
 	
-	_stringContains(string, array) {
+	_stringContains(string, array, addSpaceAfter = false) {
 		for ( let value of array ) {
+			if ( addSpaceAfter ) {
+				value += " ";
+			}
 			if ( string.indexOf(value) !== -1 ) {
 				return true;
 			}
@@ -352,7 +355,7 @@ export class AdBlockSyntaxLine {
 			if ( this.toParse.startsWith('#$#.') || this.toParse.startsWith('#$##') ) {
 				this.syntax['agStyling'] = this.toParse;
 				return;
-			} else if ( this._stringContains(this.toParse, abpSnippets) ) {
+			} else if ( this._stringContains(this.toParse, abpSnippets, true) ) {
 				this.syntax['abpSnippet'] = this.toParse;
 				// Nothing allowed after it
 				throw "not sure";
