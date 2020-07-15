@@ -67,6 +67,19 @@ export class AdBlockSyntaxLine {
 			}
 		}
 		
+		// Print rare filters to the console, so we can add them to our test lists.
+		if (
+			this.syntax['htmlFilterException'] ||
+			this.syntax['exceptionRegEx'] ||
+			this.syntax['agJSRule'] ||
+			this.syntax['agJSException'] ||
+			this.syntax['agExtendedSelectorException'] ||
+			this.syntax['agStylingException'] ||
+			this.syntax['agAdvancedStylingException']
+		) {
+			console.log(this.string);
+		}
+		
 		if ( this.isValid !== true ) {
 			try {
 				this._lookForErrors();
