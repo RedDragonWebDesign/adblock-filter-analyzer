@@ -34,11 +34,10 @@ body {
 	resize: both;
 }
 
-/* ideas: https://encycolorpedia.com/websafe */
-/* next color: make pre parsing directives the same color and steal one of the colors */
+/* color ideas: https://encycolorpedia.com/websafe */
 
 /* PRE PARSING DIRECTIVES */
-.uboPreParsingDirective {background-color: orange}
+.uboPreParsingDirective {background-color: #C586AB}
 .agHint {background-color: #C586AB}
 
 /* COMMENTS */
