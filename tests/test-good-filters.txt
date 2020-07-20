@@ -23,9 +23,14 @@ strikeout.me##body > div:if(img[alt="AdBlock Alert"])
 @@||100percentfedup.com^$generichide
 @@||cdn.optimizely.com/js/*.js$domain=compassion.com|creditsesame.com|freeshipping.com|heroku.com|imageshack.com
 
-! exception #@#
+! selectorException #@#
 abcnews.go.com#@#.social-footer-wrapper
 hdblog.it#@#a[href^="https://www.amazon."][href*="tag="]
+bleepingcomputer.com#@#.addthis_toolbox
+indiewire.com#@#iframe[style][scrolling]
+xda-developers.com#@#[style*="background-image:"]
+hwupgrade.it#@#a[href^="https://www.amazon."][href*="tag="]
+techradar.com#@#a[href^="https://amazon."][href*="tag="]
 
 ! ##+js()
 ! from ubo documentation
@@ -78,13 +83,22 @@ pornve.com##+js(set, frg, 1)
 pornve.com##+js(window.open-defuser)
 youtube.com##+js(json-prune, playerResponse.adPlacements playerResponse.playerAds adPlacements playerAds)
 freenet.de##+js(acis, document.createElement, /\}\s*\(.*?\b(self|this|window)\b.*?\)/)
-@@||www.ruanyifeng.com^$csp=script-src 'self' * 'sha256-0McqMM66/wAVZmxF6zXpjNsb1UMbTl4LXBXdhqPKxws='
 
 ! #@#+js() exception
-! per ublock documentation
 example.com#@#+js()
-! per ublock documentation
 #@#+js()
+wspolczesna.pl#@#+js(set-constant, pp_adblock_is_off, trueFunc)
+kawanfilm21.org#@#+js(abort-current-inline-script, adtival_base64_encode)
+nfmovies.com#@#+js(aopr, $myui)
+vr.pornhat.com#@#+js(aopr, document.dispatchEvent)
+o2.pl,pudelek.pl,wp.pl#@#+js(set, Object.prototype.bodies, true)
+wp.pl#@#+js(abort-on-property-read, WP.inline)
+pudelek.pl#@#+js(set, WP.gaf.setSlotCreation, noopFunc)
+kimcartoon.me,kimcartoon.to#@#+js(nosiif, (), 500)
+kimcartoon.me,kimcartoon.to#@#+js(acis, $, isAdb)
+kimcartoon.me,kimcartoon.to#@#+js(aopw, Fingerprint2)
+webmail.freenet.de#@#+js(acis, document.createElement, /\}\s*\(.*?\b(self|this|window)\b.*?\)/)
+player.hulu.com#@#+js(set, Object.prototype.parseXML, noopFunc)
 
 ! action operators :style() :remove()
 rmdown.com##A[href][target="_blank"]:style(opacity: 0 !important;)
@@ -134,9 +148,18 @@ facebook.com##:xpath(//div[@id="stream_pagelet"]//div[starts-with(@id,"hyperfeed
 ! HTML filters ##^
 newsbreak24.de##^script:has-text(===):has-text(/[\w\W]{14000}/)
 quoka.de##^script:has-text(/[\w\W]{35000}/)
+quoka.de##^script:min-text-length(35000)
+thisav.com##^script:has-text('shift')
+legendas.dev##^meta[http-equiv="refresh"]
+remaxhd.com##^script:has-text(zfgloaded)
+washingtonpost.com##^script:has-text(adblock)
+da-imnetz.de,op-online.de##^script:has-text(Inject=!)
+fnp.de##^script:has-text(Inject=!)
 
 ! HTML filter exclusions #@#^
 newsbreak24.de#@#^script:has-text(===):has-text(/[\w\W]{14000}/)
+email.t-online.de#@#^script:has-text((window);)
+email.t-online.de#@#^script:has-text(,window\);)
 
 ! RegEx /regex/
 /^https:\/\/([a-z]+\.)?sythe\.org\/[\w\W]{30,}/$image
@@ -156,9 +179,20 @@ newsbreak24.de#@#^script:has-text(===):has-text(/[\w\W]{14000}/)
 /##+js/
 /#@#+js/
 
+! not RegEx, but looks like RegEx
+/analytics/analytics.$~xmlhttprequest,3p
+@@/wp-content/plugins/popup-builder-$image,css,script,1p
+/analytics/analytics.$~xmlhttprequest,badfilter
+@@/mma/?t$image,domain=newsblaze.com
+@@/isomorphic/system/modules/ISC_Analytics.js$script,1p
+/api/v1/metrics$badfilter
+/actiontag/*$badfilter
+/v1/events|$other,xhr,badfilter
+
 ! RegEx exception @@/regex/
 @@/100percentfedup\.com/$generichide
 @@/https?:\/\/.*[=|&|%|#|+].*/$popup,domain=animeflv.net|jkanime.net
+@@/520cc.cc\/ad[a-z]{1,12}\/[a-z0-9A-Z]{12,}.js/$domain=520cc.cc
 
 ! escape character \
 tribunnews.com##+js(acis, Math, ='\x)
@@ -206,6 +240,7 @@ $third-party,xmlhttprequest,domain=alltube.pl|alltube.tv
 *$script,redirect-rule=noopjs,domain=corriere.it
 ||googletagmanager.com/gtag/js$script,redirect-rule=googletagmanager_gtm.js,domain=asmhentai.com
 *$script,domain=larena.it,redirect-rule=noopjs
+@@||www.ruanyifeng.com^$csp=script-src 'self' * 'sha256-0McqMM66/wAVZmxF6zXpjNsb1UMbTl4LXBXdhqPKxws='
 ! the following are short aliases of other commands
 $ghide
 $shide
@@ -264,6 +299,9 @@ example.org#%#window.__gaq = undefined;
 ! agJSException #@%# - fails ubo validation
 example.com#@%#window.__gaq = undefined;
 spiegel.de#@%#!function(){function b(){}function a(a){return{get:function(){return a},set:b}}function c(a){a(!1)}AG_defineProperty('_sp_.config.content_control_callback',a(b)),AG_defineProperty('_sp_.config.spid_control_callback',a(b)),AG_defineProperty('_sp_.config.vid_control_callback',a(b)),AG_defineProperty('_sp_.config.disableBlockerStyleSheets',a(!1)),AG_defineProperty('_sp_.checkState',a(c)),AG_defineProperty('_sp_.isAdBlocking',a(c)),AG_defineProperty('_sp_.isAdblocking',a(c)),AG_defineProperty('_sp_.isContentBlockerPresent',a(c)),AG_defineProperty('_sp_.getSafeUri',a(function(a){return a})),AG_defineProperty('_sp_.pageChange',a(b)),AG_defineProperty('_sp_.setupSmartBeacons',a(b)),AG_defineProperty('_sp_.msg.startMsg',a(b)),document.addEventListener('sp.blocking',function(a){a.stopImmediatePropagation(),a=document.createEvent('Event'),a.initEvent('sp.not_blocking',!0,!1),this.dispatchEvent(a)})}();
+nydailynews.com#@%#URL.createObjectURL=function(){return"about:blank"};
+userscloud.com#@%#Object.defineProperties(window,{admvpu:{get:function(){},set:function(a){if("function"==typeof a)throw Error();}},Fingerprint2:{get:function(){},set:function(){throw Error();}}});
+pilot.wp.pl#@%#Object.defineProperty(window, '__wpjslib__', { get: function() { return []; } });
 
 ! hosts file language
 #<localhost>
@@ -322,6 +360,7 @@ classic.dnvod.tv#@?#[data-code] > :not(object)
 classic.dnvod.tv#@?#[data-code] > [target="_blank"]
 classic.dnvod.tv#@?#[data-code] > :not([pluginspage="http://www.macromedia.com/go/getflashplayer"])
 sportowefakty.wp.pl#@?#body > [class]:not([id]):matches-css(position: fixed):matches-css(top: 0px)
+bing.com#@?##b_results > li :-abp-has(span:-abp-contains(Ad))
 
 ! #$# - abpSnippets
 audiofanzine.com#$#abort-on-property-read TextDecoder; abort-on-property-read require; abort-current-inline-script _audiofanzineProductStack
@@ -350,6 +389,12 @@ theverge.com#$#.c-social-buttons { visibility: hidden!important; }
 top-radio.ru#$#.socialite { visibility: hidden!important; }
 freundin.de#$#.item-content__content { padding-top: 0px !important; }
 dailywire.com#$#.SocialMediaShareButton { visibility: hidden!important; }
+bt.dk#$##CybotCookiebotDialog { display:none!important; }
+campz.at#$#.cyc-dialog { display: none!important; }
+microsoft.com#$##email-newsletter-dialog { display: none!important; }
+koinbulteni.com#$#body.dialog-prevent-scroll { overflow: visible!important; }
+danbolig.dk#$#div[id^="CybotCookiebotDialog"] { display: none!important; }
+nownews.com#$#div > div[data-reactroot][role="dialog"][aria-labelledby="modal-label"][style^="position: fixed; z-index:"] { display: none!important; }
 
 ! agStylingException #@$# & agActionOperator {}
 kurnik.pl#@$#.adsbygoogle { height: 1px !important; width: 1px !important; }
@@ -369,5 +414,3 @@ example.com#$?#h3:contains(cookies) { display: none!important; }
 
 ! agAdvancedStylingException #@$?# & agActionOperator {}
 dropgalaxy.com#@$?#input[id^="adblock_"] { remove: true; }
-
-! note: ublock annoyances list is great for testing, has a large variety of filters

@@ -21,10 +21,15 @@
 	<p>
 	<button id="clear">Clear</button>
 	<select id="filter-list">
-		<option value="./tests/test-good-filters.txt">
+		<option value="">New Filter List</option>
+		<option value="./tests/test-good-filters.txt" selected>
 			Test List 1 - Should Always Pass (No Errors) (373)</option>
 		<option value="./tests/test-bad-filters.txt">
 			Test List 2 - Should Always Fail (Errors) (137)</option>
+		<option value="./tests/test-regex.txt">
+			Test List 3 - RegEx</option>
+		<option value="https://raw.githubusercontent.com/gorhill/uBlock/2eec28520f540440c57e9d5a465d8a61054295ea/docs/tests/static-filtering-parser-checklist.txt">
+			ubo Test List</option>
 		<option value="https://cdn.jsdelivr.net/gh/uBlockOrigin/uAssets@master/filters/filters.txt">
 			uBlock filters (23,503)</option>
 		<option value="https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/badware.txt">

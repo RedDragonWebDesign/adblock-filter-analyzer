@@ -1,8 +1,8 @@
-! no spaces allowed in domain name filters
-te st
+! no spaces allowed in regex
 /reg ex/
-@@te st
 @@/te st/
+te st
+@@te st
 
 ! per ublock documentation
 example.com##+js()
@@ -135,3 +135,37 @@ fastbay.org##.detLink:has-text(VPN):nth-ancestor(3)
 notebook-center.ru##.leftCol { remove: true; }
 notebook-center.ru##^.leftCol { remove: true; }
 notebook-center.ru$1p{ remove: true; }
+
+! selector-ish syntax must be domain name only, no folders or filenames
+! good article on URL illegal characters: https://www.urlencoder.io/learn/
+! paste these into ubo validator, lots of illegal domain name stuff is allowed as long as there's no selector
+test.com#anchor##css
+test.com?id=1##css
+test.com:22/index.php##css
+test.com/te\st/index.php##css
+test.com/te<st/index.php##css
+test.com/te>st/index.php##css
+test.com/te{st/index.php##css
+test.com/te}st/index.php##css
+test.com/te[st/index.php##css
+test.com/te]st/index.php##css
+test.com/te(st/index.php##css
+test.com/te)st/index.php##css
+test.com/te'st/index.php##css
+test.com/te"st/index.php##css
+test.com/te`st/index.php##css
+test.com/te!st/index.php##css
+test.com/te@st/index.php##css
+test.com/te$st/index.php##css
+test.com/te%st/index.php##css
+test.com/te^st/index.php##css
+test.com/te&st/index.php##css
+test.com/te*st/index.php##css
+test.com/test/index.php##css
+test.com/te~st/index.php##css
+test.com/te~st/index.php##css
+test.com/te~st/index.php##css
+test.com/te~st/index.php##css
+test.com/te~st/index.php##css
+test.com/te~st/index.php##css
+test.com/te~st/index.php##css

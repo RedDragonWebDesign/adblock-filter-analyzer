@@ -1,0 +1,40 @@
+/^https://www\.narcity\.com/assets/[0-9a-f]{24,}\.js/$script
+/^https://www\.mtlblog\.com/assets/[0-9a-f]{24,}\.js/$script
+test.com
+/test\.com/
+/test/,/test/
+/test)(test/
+/test/*
+///$/$script
+
+! RegEx /regex/
+/^https:\/\/([a-z]+\.)?sythe\.org\/[\w\W]{30,}/$image
+/([0-9]{1,3}\.){3}[0-9]{1,3}.*(\/proxy|\.wasm|\.wsm|\.wa)$/$third-party,websocket
+/.*(\/proxy|\.wasm|\.wsm|\.wa)$/$websocket,xmlhttprequest,domain=reactor.cc|sickrage.ca|sorteosrd.com|streamplay.to
+/^test$/
+/^test$/$websocket
+/^https:\/\/([a-z]+\.)?sythe\.org\/\[=%#@$&!^].*[\w\W]{20,}/$image
+/##/
+/##^/
+/@@/
+/test$/
+/#@#/
+/#@#^/
+/#?#/
+/:style/
+/##+js/
+/#@#+js/
+
+! not RegEx, but looks like RegEx
+/analytics/analytics.$~xmlhttprequest,3p
+@@/wp-content/plugins/popup-builder-$image,css,script,1p
+/analytics/analytics.$~xmlhttprequest,badfilter
+@@/mma/?t$image,domain=newsblaze.com
+@@/isomorphic/system/modules/ISC_Analytics.js$script,1p
+/api/v1/metrics$badfilter
+/actiontag/*$badfilter
+/v1/events|$other,xhr,badfilter
+
+! RegEx exception @@/regex/
+@@/100percentfedup\.com/$generichide
+@@/https?:\/\/.*[=|&|%|#|+].*/$popup,domain=animeflv.net|jkanime.net
