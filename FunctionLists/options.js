@@ -13,6 +13,7 @@ export let optionsWithoutEquals = [
 	'all',
 	'app', // adguard
 	'badfilter',
+	'beacon', // undocumented shortcut for ping
 	'cname',
 	'content', // adguard
 	'cookie', // adguard
