@@ -1,7 +1,7 @@
 # adblock-filter-analyzer
 JavaScript library that analyzes AdBlock Filter Syntax. Colorizes and explains the syntax. Good for learning.
 
-Live version located at https://www.reddragonwebdesign.com/projects/AdBlock%20Filter%20Analyzer/
+Live version located at https://www.reddragonwebdesign.com/projects/adblock-filter-analyzer/
 
 I made this because I was teaching myself AdBlock filter language, and I had trouble finding a tool that diced the filters into their basic parts and explained what they were.
 
