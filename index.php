@@ -105,7 +105,7 @@
 	</p>
 	
 	<p id="json-container">
-	Error Details:<br />
+	Error Details:<br>
 	<textarea id="json" disabled></textarea>
 	</p>
 	
@@ -121,13 +121,13 @@
 	Reference Documents
 	</h2>
 	
-	<p>
-	<a href="https://help.eyeo.com/en/adblockplus/how-to-write-filters">AdBlockPlus - How To Write Filters</a><br />
-	<a href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax">uBlockOrigin - uBlock Origin's additions to the AdBlock language</a><br />
-	<a href="https://github.com/gorhill/uBlock/wiki/Resources-Library">uBlockOrigin - uBlock Origin's JavaScript Scriptlet Syntax</a><br />
-	<a href="https://adblockplus.org/en/filter-cheatsheet">AdBlockPlus - Filter Cheat Sheet</a><br />
-	<a href="https://kb.adguard.com/en/general/how-to-create-your-own-ad-filters">AdGuard - How to create your own ad filters</a>
-	</p>
+	<ul>
+		<li><a href="https://help.eyeo.com/en/adblockplus/how-to-write-filters">AdBlockPlus - How To Write Filters</a></li>
+		<li><a href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax">uBlockOrigin - uBlock Origin's additions to the AdBlock language</a></li>
+		<li><a href="https://github.com/gorhill/uBlock/wiki/Resources-Library">uBlockOrigin - uBlock Origin's JavaScript Scriptlet Syntax</a></li>
+		<li><a href="https://adblockplus.org/en/filter-cheatsheet">AdBlockPlus - Filter Cheat Sheet</a></li>
+		<li><a href="https://kb.adguard.com/en/general/how-to-create-your-own-ad-filters">AdGuard - How to create your own ad filters</a></li>
+	</ul>
 	
 	<h2>Features</h2>
 
