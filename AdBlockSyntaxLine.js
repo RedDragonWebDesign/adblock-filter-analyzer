@@ -223,6 +223,7 @@ export class AdBlockSyntaxLine {
 	}
 	
 	_lookForWhitespace() {
+		// TODO: refactor using .trimLeft() and .trimRight()
 		let trimmed = this.toParse.trim();
 		if ( this.toParse !== trimmed ) {
 			let strPos = this.toParse.indexOf(trimmed);
