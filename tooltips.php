@@ -4,7 +4,6 @@
 
 <head>
 	<title>AdBlock Filter Categories</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="style.css">
 	<script type="module" src="tooltips.js"></script>
 </head>
@@ -23,8 +22,9 @@
 		let viewer = document.getElementById('viewer');
 		
 		for ( let key in tooltips ) {
-			let value = tooltips[key];
-			viewer.innerHTML += `<div style="border:1px solid black; width: 600px;">` + value + "</div>";
+			let descriptionText = `<h2><span class="` + key + `">` + key + `</span></h2>` + tooltips[key];
+			descriptionText = `<div style="border:1px solid black; width: 600px;">` + descriptionText + "</div>";
+			viewer.innerHTML += descriptionText;
 		}
 	</script>
 </body>
