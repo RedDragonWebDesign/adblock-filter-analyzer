@@ -1,5 +1,6 @@
 body {
 	margin: 1em;
+	font-family: sans-serif;
 }
 
 #json-container {
@@ -24,6 +25,7 @@ body {
 	resize: both;
 	/* in Chrome, must have display: inline-block for contenteditable=true to prevent it from adding <div> <p> and <span> when you type. This fixes GitHub bug #23 double enter when hitting enter at end of file and #24 hitting backspace at end does not work*/
 	display: inline-block;
+	line-height: 1.3;
 }
 
 #definition {
