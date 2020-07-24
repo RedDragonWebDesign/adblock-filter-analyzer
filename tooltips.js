@@ -57,7 +57,9 @@ export let tooltips = {
 			<a href="https://adblockplus.org/filter-cheatsheet#blocking1">*wildcard</a>,
 			,multiple</li>
 		<li>@function-library - </li>
-		<li>@tip - Ad blockers add an invisible wildcard to the beginning and end of the URL you type in. Use the special characters above to set limits on these wildcards.</li>
+		<li>@tip - Ad blockers add an invisible wildcard * to the beginning and end of the URL you type in. Use the special characters above to set limits on these wildcards.</li>
+		<li>@tip - Browsers will silently add a slash to the end of http://domain.com, even if they don't display it.</li>
+		<li>@tip - There's no way to easily exclude subdomains. A filter written for domain.com will match subdomain.domain.com. To exclude subdomains, you can write a RegEx for non cosmetic filters.</li>
 		</ul>
 		`,
 	'exception': // @@
