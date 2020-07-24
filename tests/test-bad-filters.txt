@@ -30,13 +30,21 @@ test.com$websocket:remove(position: absolute !important;)
 ! action operators must have domain
 ##.test:style(position: absolute !important;)
 
+! nothing fancy allowed in domain section when paired with selector
+|test.com##test
+||test.com##test
+||test.com^##test
+test.com^##test
+/test\.com/##test
+test*.com##test
+
 ! ##+js() #@#+js() :style() :remove() must end in )
 test.com##.class:style(position: absolute !important;)garbage
 test.com##.class:remove(position: absolute !important;)garbage
 upload4earn.org##+js(ra, checked)garbage
 zheltaya.ru#@#+js(aopr, document.getElementById)garbage
 
-! no commas allowed in regex filters
+! only 1 regex filter allowed per line
 /test/,/test2/##hello
 @@/test/,/test2/
 
