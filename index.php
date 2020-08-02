@@ -87,6 +87,12 @@
 			RUS: RU AdList</option>
 		<option value="https://raw.githubusercontent.com/yourduskquibbles/webannoyances/master/ultralist.txt">
 			Web Annoyances Ultralist (33,634)</option>
+		<option value="https://easylist-downloads.adblockplus.org/abp-filters-anti-cv.txt">
+			ABP Anti Circumvention</option>
+		<option value="https://raw.githubusercontent.com/AdguardTeam/AdguardFilters/master/AnnoyancesFilter/sections/antiadblock.txt">
+			AdGuard Anti Adblock</option>
+		<option value="https://raw.githubusercontent.com/bogachenko/fuckfuckadblock/master/fuckfuckadblock.txt">
+			F Anti Adblock</option>
 	</select>
 	LineCount: <span id="line-count"></span>
 	ProcessTime: <span id="timer"></span>
@@ -125,6 +131,7 @@
 		<li><a href="https://help.eyeo.com/en/adblockplus/how-to-write-filters">AdBlockPlus - How To Write Filters</a></li>
 		<li><a href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax">uBlockOrigin - uBlock Origin's additions to the AdBlock language</a></li>
 		<li><a href="https://github.com/gorhill/uBlock/wiki/Resources-Library">uBlockOrigin - uBlock Origin's JavaScript Scriptlet Syntax</a></li>
+		<li><a href="https://github.com/gorhill/uBlock/wiki/Procedural-cosmetic-filters">uBlockOrigin - uBlock Origin's cosmetic filters</a></li>
 		<li><a href="https://adblockplus.org/en/filter-cheatsheet">AdBlockPlus - Filter Cheat Sheet</a></li>
 		<li><a href="https://kb.adguard.com/en/general/how-to-create-your-own-ad-filters">AdGuard - How to create your own ad filters</a></li>
 	</ul>
