@@ -160,7 +160,7 @@ export let tooltips = {
 		<li>@description - </li>
 		<li>@example - ##^script:has-text(===):has-text(/[\w\W]{14000}/)</li>
 		<li>@documentation - <a href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax#html-filters">uBlock Origin Wiki</a>, <a href="https://www.w3schools.com/cssref/css_selectors.asp">W3Schools CSS Selectors</a></li>
-		<li>@plugin-variations - </li>
+		<li>@plugin-variations - uBlockOrigin on Firefox only, does not work on Chrome</li>
 		<li>@special-characters - CSS Selectors .#*,>+~[]=|^$:()</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
@@ -174,7 +174,7 @@ export let tooltips = {
 		<li>@description - </li>
 		<li>@example - #@#^script:has-text(===):has-text(/[\w\W]{14000}/)</li>
 		<li>@documentation - <a href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax#html-filters">uBlock Origin Wiki</a>, <a href="https://www.w3schools.com/cssref/css_selectors.asp">W3Schools CSS Selectors</a></li>
-		<li>@plugin-variations - </li>
+		<li>@plugin-variations - uBlockOrigin on Firefox only, does not work on Chrome</li>
 		<li>@special-characters - CSS Selectors .#*,>+~[]=|^$:()</li>
 		<li>@function-library - </li>
 		<li>@tip - </li>
