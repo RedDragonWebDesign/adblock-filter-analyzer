@@ -21,7 +21,7 @@ export let optionsWithoutEquals = [
 	'css',
 	'doc',
 	'document',
-	'domain', // adguard
+	'domain', // domain with no equals is adguard only
 	'ehide',
 	'elemhide',
 	'empty',
@@ -66,7 +66,7 @@ export let optionsWithEquals = [
 	'denyallow', // = [a-z.|]
 	'domain', // = [~|a-z.]
 	'redirect', // = [a-z0-9\-./]
-	'redirect-rule', // = [a-z0-9\-./]
+	'redirect-rule', // = [a-z0-9\-./]     // ubo specific
 	'removeparam', // adguard
 	'replace', // adguard
 	'rewrite', // = [a-z\-:]
