@@ -239,7 +239,11 @@ export class AdBlockSyntaxLine {
 	
 	_lookForHosts() {
 		// hosts file syntax - usually starts in 127.0.0.1 or 0.0.0.0
-		if ( this.toParse.startsWith('127.0.0.1') || this.toParse.startsWith('0.0.0.0') ) {
+		if (
+			this.toParse.startsWith('127.0.0.1 ') ||
+			this.toParse.startsWith('0.0.0.0 ') ||
+			this.toParse.startsWith(':: ')
+		) {
 			this.syntax['hosts'] = this.toParse;
 			throw "not sure";
 		}
