@@ -27,7 +27,7 @@
 			Test List 2 - Should Always Fail (Errors) (137)</option>
 		<option value="./tests/test-regex.txt">
 			Test List 3 - RegEx</option>
-		<option value="https://raw.githubusercontent.com/gorhill/uBlock/2eec28520f540440c57e9d5a465d8a61054295ea/docs/tests/static-filtering-parser-checklist.txt">
+		<option value="https://raw.githubusercontent.com/gorhill/uBlock/master/docs/tests/static-filtering-parser-checklist.txt">
 			ubo Test List</option>
 		<option value="https://cdn.jsdelivr.net/gh/uBlockOrigin/uAssets@master/filters/filters.txt">
 			uBlock filters (23,503)</option>
