@@ -4,7 +4,7 @@
 
 <head>
 	<title>AdBlock Filter Analyzer</title>
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="style.css" />
 	<script type="module" src="adblock-filter-analyzer.js"></script>
 </head>
 
@@ -112,7 +112,7 @@
 	</p>
 	
 	<p id="json-container">
-	Error Details:<br>
+	Error Details:<br />
 	<textarea id="json" disabled></textarea>
 	</p>
 	
