@@ -241,6 +241,7 @@ $third-party,xmlhttprequest,domain=alltube.pl|alltube.tv
 ||googletagmanager.com/gtag/js$script,redirect-rule=googletagmanager_gtm.js,domain=asmhentai.com
 *$script,domain=larena.it,redirect-rule=noopjs
 @@||www.ruanyifeng.com^$csp=script-src 'self' * 'sha256-0McqMM66/wAVZmxF6zXpjNsb1UMbTl4LXBXdhqPKxws='
+/filer_-_cookie_disclaimer_ny/$file/accept_cookies.js$script,domain=pl
 ! the following are short aliases of other commands
 $ghide
 $shide
