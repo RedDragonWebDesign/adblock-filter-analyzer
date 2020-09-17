@@ -66,6 +66,7 @@ $=testingNothingOnLeftOfEqualsSign
 $test=abcd123
 $ test=abcd123
 $ test
+/filer_-_cookie_disclaimer_ny/$file/accept_cookies.js
 ! no spaces after option commas
 example.com$1p, 3p
 ! options cannot be capitalized
