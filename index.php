@@ -96,6 +96,7 @@
 	</select>
 	LineCount: <span id="line-count"></span>
 	ProcessTime: <span id="timer"></span>
+	ErrorCount: <span id="error-count"></span>
 	</p>
 	
 	<div id="flex-container">
