@@ -1,5 +1,4 @@
-// Copyright https://www.RedDragonWebDesign.com/
-// Permission required to use or copy code. All rights reserved.
+// Copyright https://www.RedDragonWebDesign.com/ All rights reserved.
 
 "use strict";
 
