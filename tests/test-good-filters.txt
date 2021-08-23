@@ -144,6 +144,8 @@ ameshkov.github.io###testdiv:watch-attr(id):has(p)
 ! :xpath()
 fastbay.org##.detLink:has-text(VPN):xpath(../../..)
 facebook.com##:xpath(//div[@id="stream_pagelet"]//div[starts-with(@id,"hyperfeed_story_id_")][.//h6//span/text()="People You May Know"])
+!:matches-path (new one from 2021)
+example.com##:matches-path(/shop) p
 
 ! HTML filters ##^
 newsbreak24.de##^script:has-text(===):has-text(/[\w\W]{14000}/)
